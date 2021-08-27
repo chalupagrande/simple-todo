@@ -1,12 +1,10 @@
 import React from "react";
-import { useQuery } from "@apollo/client";
-import { Studies, ViewerQuery } from "~/lib/apollo/queries";
-import { initializeApollo } from "~/lib/apollo/client";
+// import { useQuery } from "@apollo/client";
+// import { Studies, ViewerQuery } from "~/lib/apollo/queries";
+// import { initializeApollo } from "~/lib/apollo/client";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 
-export default function Profile({ user, viewer }) {
-  // const {loading, data, error} = useQuery(Studies)
-
+export default function Profile({ user }) {
   return user ? (
     <div>
       <img src={user.picture} alt={user.name} />
@@ -21,18 +19,14 @@ export default function Profile({ user, viewer }) {
 
 export const getServerSideProps = withPageAuthRequired({
   returnTo: "/",
-  async getServerSideProps(ctx) {
-    const apolloClient = initializeApollo();
-    await apolloClient.query({
-      query: ViewerQuery,
-    });
+  // async getServerSideProps(ctx) {
+  //   const apolloClient = initializeApollo();
+  //   const cache = apolloClient.cache.extract();
 
-    const cache = apolloClient.cache.extract();
-
-    return {
-      props: {
-        viewer: cache,
-      },
-    };
-  },
+  //   return {
+  //     props: {
+  //       viewer: cache,
+  //     },
+  //   };
+  // },
 });
