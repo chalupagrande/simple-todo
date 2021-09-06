@@ -5,7 +5,7 @@ import Lists from "~/components/Lists";
 
 export default function Home() {
   const { user } = useUser();
-
+  console.log("USER", user);
   return (
     <div className={styles.container}>
       <Head>
@@ -16,7 +16,7 @@ export default function Home() {
 
       <main className={styles.main}>
         <h3>Welcome to TODO</h3>
-        {user && <Lists />}
+        {user && <Lists user={user} />}
       </main>
     </div>
   );

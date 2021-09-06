@@ -1,4 +1,3 @@
-import { ConsoleSqlOutlined } from "@ant-design/icons";
 import dbConnect from "~/lib/dbConnect";
 import List from "~/lib/models/List";
 
@@ -12,10 +11,19 @@ export const resolvers = {
   },
 
   Mutation: {
-    async createList(_, _args) {
+    async createList(_, { data }) {
       try {
         await dbConnect();
-        const list = new List(_args);
+        // const owner = data.owner
+        /**
+         * TODO: FIX THIS
+         */
+        // let listData = data
+        // delete listData.owner
+        // listData.owner =
+        // const user = await User.findOneAndUpdate({auth0Id: owner.auth0Id}, owner, {new: true, upsert: true})
+        const list = new List(data);
+
         await list.save();
         return list;
       } catch (err) {

@@ -3,7 +3,7 @@ import ExistingLists from "./ExistingLists";
 import CreateList from "./CreateList";
 import { Row, Col } from "antd";
 
-function Lists() {
+function Lists({ user }) {
   return (
     <div>
       <Row>
@@ -11,7 +11,7 @@ function Lists() {
           <ExistingLists />
         </Col>
         <Col span={12}>
-          <CreateList />
+          <CreateList user={user} />
         </Col>
       </Row>
     </div>

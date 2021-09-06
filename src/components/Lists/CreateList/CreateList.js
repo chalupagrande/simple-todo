@@ -3,9 +3,9 @@ import { useMutation } from "@apollo/client";
 import { Button, Form, Input, Typography } from "antd";
 const { Title } = Typography;
 import { CREATE_LIST } from "~/lib/apollo/mutations";
-import { ListFragment } from "~/lib/apollo/queries";
+import { LIST_FRAGMENT } from "~/lib/apollo/queries";
 
-function CreateList() {
+function CreateList({ user }) {
   const [form] = Form.useForm();
   const [createList, { loading, error, data }] = useMutation(CREATE_LIST, {
     update(cache, { data: { createList } }) {
@@ -14,7 +14,7 @@ function CreateList() {
           lists(existingLists) {
             const newListRef = cache.writeFragment({
               data: createList,
-              fragment: ListFragment,
+              fragment: LIST_FRAGMENT,
             });
             return { items: [...existingLists.items, newListRef] };
           },
@@ -24,8 +24,18 @@ function CreateList() {
   });
 
   function handleSubmit(values) {
-    console.log("DONE", values);
-    createList({ variables: values });
+    createList({
+      variables: {
+        data: {
+          ...values,
+          owner: {
+            name: user.name,
+            email: user.email,
+            auth0Id: user.sub,
+          },
+        },
+      },
+    });
   }
 
   console.log("DATA", loading, error, data);

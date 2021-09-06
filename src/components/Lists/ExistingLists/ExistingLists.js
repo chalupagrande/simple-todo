@@ -26,7 +26,7 @@ function ExistingLists() {
     setDeletingId(id);
     deleteList({
       variables: {
-        _id: id,
+        id: id,
       },
     });
   }
