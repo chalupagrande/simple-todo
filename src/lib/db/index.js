@@ -8,6 +8,11 @@ UserModel.hasMany(ListModel, {
   type: DataTypes.UUID,
 });
 
+ListModel.belongsTo(UserModel, {
+  foreignKey: "owner",
+  type: DataTypes.UUID,
+});
+
 // db.sync({ force: true });
 db.sync();
 

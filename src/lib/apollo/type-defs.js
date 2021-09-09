@@ -28,7 +28,7 @@ export const typeDefs = gql`
 
   type Query {
     lists: ListResponse
-    test: SuccessResponse
+    test(data: JSONObject): SuccessResponse
   }
 
   type Mutation {

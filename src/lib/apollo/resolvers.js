@@ -4,14 +4,22 @@ import User from "~/lib/db/models/UserModel";
 
 export const resolvers = {
   Query: {
-    async test() {
-      try {
-        await db.authenticate();
-        return { success: true };
-      } catch (error) {
-        console.error("Unable to connect to the database:", error);
-        return { success: false };
-      }
+    /**
+     * YOU WHERE HERE 9.8.21
+     * You were testing how findOne Works
+     * NOTICE THE .getUser !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     * TODO: Adapt this into a List GRAPHQL query
+     *
+     */
+    async test(_, { data }) {
+      console.log("DATA >>>>>>>>>>>> ", data);
+      const list = await List.findOne({
+        where: data,
+      });
+      console.log("LIST >>>>>>>>>>>>>> ", list.toJSON());
+      let owner = await list.getUser();
+      console.log("owner >>>>>>>>>>>>>> ", owner.toJSON());
+      return { success: true };
     },
     async lists() {
       const lists = await List.findAll();
