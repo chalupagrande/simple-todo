@@ -1,5 +1,5 @@
 import { gql } from "graphql-tag";
-import { GraphQLJSONObject } from "graphql-type-json";
+import { GraphQLJSONObject } from "graphql-type-json"; // DO NOT REMOVE
 
 export const typeDefs = gql`
   scalar JSONObject # refers to the GraphQLJSONObject
@@ -16,7 +16,7 @@ export const typeDefs = gql`
     id: ID
     name: String
     items: [ListItem]
-    status: Boolean
+    status: StatusTypes
     owner: User
     shared: UserListResponse
     isRecipe: Boolean
@@ -28,11 +28,12 @@ export const typeDefs = gql`
 
   type Query {
     lists: ListResponse
+    test: SuccessResponse
   }
 
   type Mutation {
-    createList(data: JSONObject): List
-    deleteList(_id: ID!): DeleteListResponse
+    createList(data: JSONObject!): List
+    deleteList(id: ID!): DeleteListResponse
   }
 
   type User {
@@ -43,5 +44,15 @@ export const typeDefs = gql`
 
   type UserListResponse {
     items: [User]
+  }
+
+  type SuccessResponse {
+    success: Boolean
+  }
+
+  enum StatusTypes {
+    NOT_STARTED
+    STARTED
+    COMPLETED
   }
 `;

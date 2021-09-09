@@ -1,10 +1,11 @@
 import { gql } from "graphql-tag";
 
 export const CREATE_LIST = gql`
-  mutation CreateList($data: JSONObject) {
+  mutation CreateList($data: JSONObject!) {
     createList(data: $data) {
       id
       name
+      isRecipe
       items {
         name
         status

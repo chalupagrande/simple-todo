@@ -1,9 +1,9 @@
 import React from "react";
 import { useMutation } from "@apollo/client";
-import { Button, Form, Input, Typography } from "antd";
+import { Button, Checkbox, Form, Input, Typography } from "antd";
 const { Title } = Typography;
 import { CREATE_LIST } from "~/lib/apollo/mutations";
-import { LIST_FRAGMENT } from "~/lib/apollo/queries";
+import { LIST_FRAGMENT } from "~/lib/apollo/fragments";
 
 function CreateList({ user }) {
   const [form] = Form.useForm();
@@ -24,6 +24,7 @@ function CreateList({ user }) {
   });
 
   function handleSubmit(values) {
+    console.log("VALUES", values);
     createList({
       variables: {
         data: {
@@ -45,6 +46,9 @@ function CreateList({ user }) {
       <Title level={4}>Create New List</Title>
       <Form.Item label="Name" name="name" required>
         <Input placeholder="My cool List"></Input>
+      </Form.Item>
+      <Form.Item name="isRecipe" valuePropName="checked">
+        <Checkbox>Is Recipe</Checkbox>
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">
