@@ -1,20 +1,20 @@
 import React from "react";
 import { useMutation } from "@apollo/client";
-import { Button, Checkbox, Form, Input, Typography } from "antd";
-const { Title } = Typography;
+import { Button, Checkbox, Form, Input } from "antd";
 import { CREATE_LIST } from "~/lib/apollo/mutations";
-import { LIST_FRAGMENT } from "~/lib/apollo/fragments";
+import { LIST_FRAGMENT_SHORT } from "~/lib/apollo/fragments";
 
 function CreateList({ user }) {
   const [form] = Form.useForm();
   const [createList, { loading, error, data }] = useMutation(CREATE_LIST, {
     update(cache, { data: { createList } }) {
+      console.log("CREATE LISTS");
       cache.modify({
         fields: {
           lists(existingLists) {
             const newListRef = cache.writeFragment({
               data: createList,
-              fragment: LIST_FRAGMENT,
+              fragment: LIST_FRAGMENT_SHORT,
             });
             return { items: [...existingLists.items, newListRef] };
           },
@@ -43,9 +43,8 @@ function CreateList({ user }) {
 
   return (
     <Form form={form} layout="vertical" onFinish={handleSubmit}>
-      <Title level={4}>Create New List</Title>
       <Form.Item label="Name" name="name" required>
-        <Input placeholder="My cool List"></Input>
+        <Input placeholder="My cool List" autoComplete="off"></Input>
       </Form.Item>
       <Form.Item name="isRecipe" valuePropName="checked">
         <Checkbox>Is Recipe</Checkbox>

@@ -4,25 +4,22 @@ import User from "~/lib/db/models/UserModel";
 
 export const resolvers = {
   Query: {
-    /**
-     * YOU WHERE HERE 9.8.21
-     * You were testing how findOne Works
-     * NOTICE THE .getUser !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-     * TODO: Adapt this into a List GRAPHQL query
-     *
-     */
-    async test(_, { data }) {
-      console.log("DATA >>>>>>>>>>>> ", data);
-      const list = await List.findOne({
-        where: data,
-      });
-      console.log("LIST >>>>>>>>>>>>>> ", list.toJSON());
-      let owner = await list.getUser();
-      console.log("owner >>>>>>>>>>>>>> ", owner.toJSON());
-      return { success: true };
-    },
-    async lists() {
-      const lists = await List.findAll();
+    async lists(_, { auth0Id }) {
+      let lists;
+      if (auth0Id) {
+        // get only lists owned by user
+        lists = await List.findAll({
+          include: [
+            {
+              where: { auth0Id: auth0Id },
+              model: User,
+            },
+          ],
+        });
+      } else {
+        // get all lists
+        lists = await List.findAll();
+      }
       return { items: lists };
     },
   },
@@ -39,8 +36,8 @@ export const resolvers = {
         });
         const list = await List.create({
           ...listData,
-          owner: owner.id,
         });
+        owner.addList(list);
         const finalList = list.toJSON();
         finalList.owner = owner;
         return finalList;
@@ -49,15 +46,29 @@ export const resolvers = {
         throw Error(err);
       }
     },
-    // async deleteList(_, _args) {
-    //   try {
-    //     await dbConnect();
-    //     await List.deleteOne({ _id: _args._id });
-    //     return { success: true };
-    //   } catch (err) {
-    //     console.error(err);
-    //     throw Error(err);
-    //   }
-    // },
+
+    async updateListStatus(_, { id, status }) {
+      try {
+        const list = await List.findOne({ where: { id } });
+        list.set("status", status);
+        list.set("lastStatusUpdate", new Date());
+        let final = await list.save();
+        console.log("FINAL", final);
+        return final.toJSON();
+      } catch (err) {
+        console.error(err);
+        throw Error(err);
+      }
+    },
+
+    async deleteList(_, { id }) {
+      try {
+        await List.destroy({ where: { id } });
+        return { success: true };
+      } catch (err) {
+        console.error(err);
+        throw Error(err);
+      }
+    },
   },
 };

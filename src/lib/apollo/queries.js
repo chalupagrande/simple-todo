@@ -1,13 +1,13 @@
 import { gql } from "graphql-tag";
-import { LIST_FRAGMENT } from "./fragments";
+import { LIST_FRAGMENT_SHORT } from "./fragments";
 
 export const LISTS = gql`
-  query {
-    lists {
+  query GetLists($auth0Id: String) {
+    lists(auth0Id: $auth0Id) {
       items {
-        ...ListFragment
+        ...ListFragmentShort
       }
     }
   }
-  ${LIST_FRAGMENT}
+  ${LIST_FRAGMENT_SHORT}
 `;

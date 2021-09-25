@@ -10,6 +10,7 @@ const ListModel = db.define("list", {
   name: {
     type: Sequelize.STRING,
     allowNull: false,
+    trim: true,
   },
   isRecipe: {
     type: Sequelize.BOOLEAN,
@@ -19,10 +20,13 @@ const ListModel = db.define("list", {
     type: Sequelize.ENUM("NOT_STARTED", "STARTED", "COMPLETED"),
     defaultValue: "NOT_STARTED",
   },
+  lastStatusUpdate: {
+    type: Sequelize.DATE,
+    defaultValue: Date.now(),
+  },
   items: {
     type: Sequelize.ARRAY(Sequelize.UUID),
     allowNull: true,
-    trim: true,
   },
 });
 

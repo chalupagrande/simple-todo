@@ -1,0 +1,22 @@
+.tableHeader {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+}
+
+.completed,
+.completed:hover {
+  background-color: rgb(225, 247, 225);
+}
+
+.timeAgo {
+  color: grey;
+  font-size: 10px;
+  line-height: 10px;
+}
+
+.listItem {
+  display: flex;
+  flex-flow: column nowrap;
+}

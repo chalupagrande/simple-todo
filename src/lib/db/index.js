@@ -1,18 +1,30 @@
 import db from "./connection";
 import UserModel from "./models/UserModel";
 import ListModel from "./models/ListModel";
-import { DataTypes } from "sequelize";
 
-UserModel.hasMany(ListModel, {
-  foreignKey: "owner",
-  type: DataTypes.UUID,
+// one to many User:List
+UserModel.belongsToMany(ListModel, {
+  through: "user_lists",
 });
 
-ListModel.belongsTo(UserModel, {
-  foreignKey: "owner",
-  type: DataTypes.UUID,
+ListModel.belongsToMany(UserModel, {
+  through: "user_lists",
 });
 
+// many to many List:List
+ListModel.belongsToMany(ListModel, {
+  as: "children",
+  foreignKey: "subLists",
+  through: "lists_lists",
+});
+
+ListModel.belongsToMany(ListModel, {
+  as: "parents",
+  foreignKey: "parentLists",
+  through: "lists_lists",
+});
+
+// db.sync({ alter: true });
 // db.sync({ force: true });
 db.sync();
 

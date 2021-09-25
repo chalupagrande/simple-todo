@@ -1,11 +1,21 @@
-.navigation {
+.menu {
+  min-width: 100%;
+  flex-flow: row nowrap;
   display: flex;
-  flex-flow: row wrap;
+  justify-content: space-between;
+  align-content: center;
+}
+
+.menuTitle {
+  justify-self: center;
+}
+
+.navigation {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
 
 .navigation > li:not(:first-child) {
-  margin-left: 1rem;
+  margin-top: 1rem;
 }

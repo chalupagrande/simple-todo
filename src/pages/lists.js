@@ -1,10 +1,13 @@
 import Head from "next/head";
 import styles from "~/styles/Home.module.css";
 import { useUser } from "@auth0/nextjs-auth0";
-import Lists from "~/components/Lists";
+import { CreateList, ListTable } from "~/components/Lists";
+import { Typography } from "antd";
+const { Title } = Typography;
 
 export default function Home() {
   const { user } = useUser();
+
   return (
     <div className={styles.container}>
       <Head>
@@ -14,7 +17,9 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h3>Welcome to TODO</h3>
+        <Title level={4}>Lists</Title>
+        <CreateList user={user} />
+        <ListTable user={user} />
       </main>
     </div>
   );
