@@ -1,10 +1,7 @@
 import Head from "next/head";
 import styles from "~/styles/Home.module.css";
-import { useUser } from "@auth0/nextjs-auth0";
-import Lists from "~/components/Lists";
 
 export default function Home() {
-  const { user } = useUser();
   return (
     <div className={styles.container}>
       <Head>

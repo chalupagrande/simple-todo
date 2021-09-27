@@ -4,7 +4,7 @@ import { LISTS } from "~/lib/apollo/queries";
 import { DELETE_LIST, UPDATE_LIST_STATUS } from "~/lib/apollo/mutations";
 import ListActionMenu from "./ListActionMenu";
 import { LoadingOutlined, MoreOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Popover, Typography, Table } from "antd";
+import { Button, Checkbox, Dropdown, Typography, Table } from "antd";
 const { Title } = Typography;
 import { timeAgo, STATUS_ENUM, useInterval } from "~/lib/utils";
 import styles from "./ListTable.module.css";
@@ -14,6 +14,7 @@ function ListTable({ user }) {
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [showSubLists, setShowSubLists] = useState(false);
   const { loading, data, error } = useQuery(LISTS, {
+    skip: !user,
     variables: {
       auth0Id: user?.sub,
     },
@@ -93,9 +94,13 @@ function ListTable({ user }) {
       key: "action",
       align: "right",
       render: (text, record) => (
-        <Popover placement="left" content={<ListActionMenu record={record} />}>
+        <Dropdown
+          trigger={["click"]}
+          placement="bottomLeft"
+          overlay={<ListActionMenu record={record} />}
+        >
           <MoreOutlined />
-        </Popover>
+        </Dropdown>
       ),
     },
   ];

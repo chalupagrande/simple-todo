@@ -1,5 +1,6 @@
 import React from "react";
 import { useMutation } from "@apollo/client";
+import { Menu } from "antd";
 import { DELETE_LIST } from "~/lib/apollo/mutations";
 import {
   DeleteOutlined,
@@ -33,19 +34,19 @@ function ListActionMenu({ record }) {
   console.log(loading, data, error);
 
   return (
-    <ul className={styles.listActionMenu}>
-      <li onClick={handleDelete}>
-        {loading ? <LoadingOutlined spin /> : <DeleteOutlined />} Delete
-      </li>
-      <li>
-        <EditOutlined /> Edit
-      </li>
+    <Menu className={styles.listActionMenu}>
+      <Menu.Item
+        onClick={handleDelete}
+        icon={loading ? <LoadingOutlined spin /> : <DeleteOutlined />}
+      >
+        Delete
+      </Menu.Item>
+      <Menu.Item icon={<EditOutlined />}>Edit</Menu.Item>
       {!record.isRecipe && (
-        <li>
-          <SnippetsOutlined /> Make Recipe
-        </li>
+        <Menu.Item icon={<SnippetsOutlined />}>Make Recipe</Menu.Item>
       )}
-    </ul>
+      {record.isRecipe && <Menu.Item>Manage</Menu.Item>}
+    </Menu>
   );
 }
 

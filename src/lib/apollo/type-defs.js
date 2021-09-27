@@ -31,12 +31,16 @@ export const typeDefs = gql`
   }
 
   type Query {
-    lists(auth0Id: String): ListResponse
-    test(data: JSONObject): SuccessResponse
+    lists(auth0Id: String!): ListResponse
+    checkUser(user: JSONObject!): SuccessResponse
   }
 
   type Mutation {
-    createList(data: JSONObject!): List
+    createList(
+      data: JSONObject!
+      user: JSONObject!
+      parentList: JSONObject
+    ): List
     deleteList(id: ID!): DeleteListResponse
     updateListStatus(id: ID!, status: String!): List
   }

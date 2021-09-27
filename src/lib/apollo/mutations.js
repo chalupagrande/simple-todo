@@ -2,8 +2,12 @@ import { gql } from "graphql-tag";
 import { LIST_FRAGMENT, LIST_FRAGMENT_SHORT } from "./fragments";
 
 export const CREATE_LIST = gql`
-  mutation CreateList($data: JSONObject!) {
-    createList(data: $data) {
+  mutation CreateList(
+    $data: JSONObject!
+    $user: JSONObject!
+    $parentList: JSONObject
+  ) {
+    createList(data: $data, user: $user, parentList: $parentList) {
       ...ListFragment
     }
   }

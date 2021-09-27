@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { UserProvider } from "@auth0/nextjs-auth0";
 import { ApolloProvider } from "@apollo/client";
 import { useApollo } from "~/lib/apollo/client";

@@ -4,11 +4,10 @@ import { Button, Checkbox, Form, Input } from "antd";
 import { CREATE_LIST } from "~/lib/apollo/mutations";
 import { LIST_FRAGMENT_SHORT } from "~/lib/apollo/fragments";
 
-function CreateList({ user }) {
+function CreateList({ user, parentList }) {
   const [form] = Form.useForm();
   const [createList, { loading, error, data }] = useMutation(CREATE_LIST, {
     update(cache, { data: { createList } }) {
-      console.log("CREATE LISTS");
       cache.modify({
         fields: {
           lists(existingLists) {
@@ -24,17 +23,13 @@ function CreateList({ user }) {
   });
 
   function handleSubmit(values) {
-    console.log("VALUES", values);
     createList({
       variables: {
         data: {
           ...values,
-          owner: {
-            name: user.name,
-            email: user.email,
-            auth0Id: user.sub,
-          },
         },
+        user: { ...user, auth0Id: user.sub },
+        parentList,
       },
     });
   }
