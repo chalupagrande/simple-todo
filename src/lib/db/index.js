@@ -2,7 +2,7 @@ import db from "./connection";
 import UserModel from "./models/UserModel";
 import ListModel from "./models/ListModel";
 
-// one to many User:List
+// one to many:many User:List
 UserModel.belongsToMany(ListModel, {
   through: "user_lists",
 });
@@ -10,6 +10,12 @@ UserModel.belongsToMany(ListModel, {
 ListModel.belongsToMany(UserModel, {
   through: "user_lists",
 });
+
+//
+UserModel.hasMany(ListModel, {
+  foreignKey: "addedBy",
+});
+ListModel.belongsTo(UserModel);
 
 // many to many List:List
 ListModel.belongsToMany(ListModel, {

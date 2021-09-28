@@ -25,6 +25,7 @@
     "pg-hstore": "^2.3.4",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "safe-json-stringify": "^1.2.0",
     "sequelize": "^6.6.5"
   },
   "devDependencies": {

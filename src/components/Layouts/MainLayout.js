@@ -10,6 +10,7 @@ function Layout({ children }) {
   const [checkUser, { loading, data, error }] = useLazyQuery(CHECK_USER);
   useEffect(() => {
     if (user) {
+      console.log("CHECKING USER");
       checkUser({
         variables: {
           user: { ...user, auth0Id: user.sub },
@@ -18,7 +19,6 @@ function Layout({ children }) {
     }
   }, [user]);
 
-  console.log("CHECK USER", loading, data, error);
   return (
     <div className={styles.wrapper}>
       <Navigation />

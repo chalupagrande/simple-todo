@@ -22,9 +22,9 @@ export const DELETE_LIST = gql`
   }
 `;
 
-export const UPDATE_LIST_STATUS = gql`
-  mutation UpdateListStatus($id: ID!, $status: String!) {
-    updateListStatus(id: $id, status: $status) {
+export const UPDATE_LIST = gql`
+  mutation UpdateList($id: ID!, $data: JSONObject!) {
+    updateList(id: $id, data: $data) {
       ...ListFragmentShort
     }
   }

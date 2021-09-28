@@ -1,24 +1,26 @@
 import db from "~/lib/db";
 import List from "~/lib/db/models/ListModel";
 import User from "~/lib/db/models/UserModel";
-// const { Op } = require("sequelize");
 
 export const resolvers = {
   Query: {
     // Gets Lists owned by a User
-    async lists(_, { auth0Id }) {
-      let lists;
-      // get only lists owned by user
-      lists = await List.findAll({
-        where: { isDefault: false },
+    async lists(_, { id, auth0Id, filter }) {
+      let list = await List.findOne({
+        where: id ? { id } : { isDefault: true },
         include: [
           {
-            where: { auth0Id: auth0Id },
+            model: List,
+            as: "children",
+          },
+          {
             model: User,
+            where: { auth0Id },
           },
         ],
       });
-      return { items: lists };
+      const final = list.toJSON();
+      return { items: final.children, parent: final };
     },
 
     // creates User in DB
@@ -48,10 +50,6 @@ export const resolvers = {
         // find user
         const owner = await User.findOne({
           where: { auth0Id: user.auth0Id },
-          include: {
-            model: List,
-            where: { isDefault: true },
-          },
         });
 
         // find parent list
@@ -64,10 +62,12 @@ export const resolvers = {
         // create List
         const list = await List.create({
           ...data,
+          addedBy: owner.id,
         });
 
         parent.addChild(list);
         owner.addList(list);
+
         const finalList = list.toJSON();
         finalList.owner = owner;
         return finalList;
@@ -77,13 +77,21 @@ export const resolvers = {
       }
     },
 
-    async updateListStatus(_, { id, status }) {
+    async updateList(_, { id, data }) {
       try {
         const list = await List.findOne({ where: { id } });
-        list.set("status", status);
-        list.set("lastStatusUpdate", new Date());
+        console.log("DATA", data);
+        for (let [key, value] of Object.entries(data)) {
+          if (key === "id") continue;
+          else {
+            list.set(key, value);
+          }
+
+          if (key === "status") {
+            list.set("lastStatusUpdate", new Date());
+          }
+        }
         let final = await list.save();
-        console.log("FINAL", final);
         return final.toJSON();
       } catch (err) {
         console.error(err);

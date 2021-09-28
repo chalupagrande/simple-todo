@@ -23,6 +23,7 @@ function CreateList({ user, parentList }) {
   });
 
   function handleSubmit(values) {
+    form.resetFields();
     createList({
       variables: {
         data: {
@@ -33,8 +34,6 @@ function CreateList({ user, parentList }) {
       },
     });
   }
-
-  console.log("DATA", loading, error, data);
 
   return (
     <Form form={form} layout="vertical" onFinish={handleSubmit}>

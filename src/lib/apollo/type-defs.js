@@ -6,19 +6,21 @@ export const typeDefs = gql`
   scalar JSONObject # refers to the GraphQLJSONObject
   scalar Date
 
-  type ListResponse {
-    items: [List]
+  input ListFilter {
+    id: ID
+    isRecipe: Boolean
+    isDefault: Boolean
+    name: String
   }
 
-  type ListItem {
-    name: String
-    status: Boolean
+  type ListResponse {
+    items: [List]
+    parent: List
   }
 
   type List {
     id: ID
     name: String
-    items: [ListItem]
     status: StatusTypes
     owner: User
     shared: UserListResponse
@@ -31,7 +33,7 @@ export const typeDefs = gql`
   }
 
   type Query {
-    lists(auth0Id: String!): ListResponse
+    lists(id: ID, auth0Id: String!, filter: ListFilter): ListResponse
     checkUser(user: JSONObject!): SuccessResponse
   }
 
@@ -42,7 +44,7 @@ export const typeDefs = gql`
       parentList: JSONObject
     ): List
     deleteList(id: ID!): DeleteListResponse
-    updateListStatus(id: ID!, status: String!): List
+    updateList(id: ID!, data: JSONObject!): List
   }
 
   type User {
