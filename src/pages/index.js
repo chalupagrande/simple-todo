@@ -1,7 +1,8 @@
+import React from "react";
 import Head from "next/head";
 import styles from "~/styles/Home.module.css";
 
-export default function Home() {
+function Home() {
   return (
     <div className={styles.container}>
       <Head>
@@ -16,3 +17,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;

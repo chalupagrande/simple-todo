@@ -8,14 +8,13 @@ export const typeDefs = gql`
 
   input ListFilter {
     id: ID
-    isRecipe: Boolean
+    isParent: Boolean
     isDefault: Boolean
     name: String
   }
 
   type ListResponse {
     items: [List]
-    parent: List
   }
 
   type List {
@@ -25,8 +24,9 @@ export const typeDefs = gql`
     owner: User
     shared: UserListResponse
     lastStatusUpdate: Date
-    isRecipe: Boolean
+    isParent: Boolean
     isDefault: Boolean
+    children: ListResponse
   }
 
   type DeleteListResponse {
@@ -34,7 +34,8 @@ export const typeDefs = gql`
   }
 
   type Query {
-    lists(id: ID, auth0Id: String!, filter: ListFilter): ListResponse
+    list(id: ID, auth0Id: String!, filter: ListFilter): List
+    lists(auth0Id: String!, filter: ListFilter): ListResponse
     checkUser(user: JSONObject!): SuccessResponse
   }
 

@@ -6,11 +6,12 @@ export const LIST_ITEM_FRAGMENT = gql`
     status
   }
 `;
+
 export const LIST_FRAGMENT_SHORT = gql`
   fragment ListFragmentShort on List {
     id
     name
-    isRecipe
+    isParent
     status
     lastStatusUpdate
     isDefault
@@ -19,17 +20,12 @@ export const LIST_FRAGMENT_SHORT = gql`
 
 export const LIST_FRAGMENT = gql`
   fragment ListFragment on List {
-    id
-    name
-    isRecipe
-    status
-    lastStatusUpdate
-    isDefault
-    owner {
-      id
-      email
-      name
-      auth0Id
+    ...ListFragmentShort
+    children {
+      items {
+        ...ListFragmentShort
+      }
     }
   }
+  ${LIST_FRAGMENT_SHORT}
 `;

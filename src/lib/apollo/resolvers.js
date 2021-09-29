@@ -4,10 +4,10 @@ import User from "~/lib/db/models/UserModel";
 
 export const resolvers = {
   Query: {
-    // Gets Lists owned by a User
-    async lists(_, { id, auth0Id, filter }) {
+    // Gets List owned by a User
+    async list(_, { id, auth0Id, filter }) {
       const list = await List.findOne({
-        where: id ? { id } : { isDefault: true },
+        where: id ? { id } : filter,
         include: [
           {
             model: List,
@@ -20,12 +20,31 @@ export const resolvers = {
         ],
       });
       const final = list.toJSON();
-      return { items: final.children, parent: final };
+      final.children = { items: final.children };
+      return final;
+    },
+    // get multiple lists
+    async lists(_, { auth0Id, filter }) {
+      const lists = await List.findAll({
+        where: filter || {},
+        include: [
+          {
+            model: List,
+            as: "children",
+          },
+          {
+            model: User,
+            where: { auth0Id },
+          },
+        ],
+      });
+      console.log("LISTS", lists);
+      return { items: lists };
     },
 
     // creates User in DB
     async checkUser(_, { user }) {
-      // creates the user if it wasnt already
+      // creates the user if it wasn't already
       const [userCreated, wasCreated] = await User.findOrCreate({
         where: { auth0Id: user.auth0Id },
         defaults: user,
@@ -34,7 +53,7 @@ export const resolvers = {
         // creates a default list for the user
         const defaultList = await List.create({
           name: "_DEFAULT_",
-          isRecipe: true,
+          isParent: true,
           isDefault: true,
         });
         userCreated.addList(defaultList);
@@ -66,7 +85,7 @@ export const resolvers = {
         });
 
         // update relationships
-        parent.isRecipe = true;
+        parent.isParent = true;
         parent.addChild(list);
         owner.addList(list);
         await parent.save();

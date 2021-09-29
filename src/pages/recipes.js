@@ -1,24 +1,24 @@
-import Head from "next/head";
+import React from "react";
+import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import styles from "~/styles/Home.module.css";
-import { useUser } from "@auth0/nextjs-auth0";
-import { CreateList, ListTable } from "~/components/Lists";
+import RecursiveListTable from "~/components/Lists/ListTable/RecursiveListTable";
 import { Typography } from "antd";
-const { Title } = Typography;
 import { RECIPES } from "~/lib/apollo/queries";
+const { Title } = Typography;
 
-export default function Home() {
-  const { user } = useUser();
-
+function Recipes({ user }) {
   return (
     <div className={styles.container}>
       <main className={styles.main}>
         <Title level={4}>Recipes</Title>
-        <ListTable
-          user={user}
-          query={RECIPES}
-          columns={["name", "status", "action"]}
-        />
+        <RecursiveListTable QUERY={RECIPES} level={0} user={user} />
       </main>
     </div>
   );
 }
+
+export const getServerSideProps = withPageAuthRequired({
+  returnTo: "/",
+});
+
+export default Recipes;

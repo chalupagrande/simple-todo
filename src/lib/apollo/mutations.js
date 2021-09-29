@@ -1,5 +1,5 @@
 import { gql } from "graphql-tag";
-import { LIST_FRAGMENT, LIST_FRAGMENT_SHORT } from "./fragments";
+import { LIST_FRAGMENT_SHORT } from "./fragments";
 
 export const CREATE_LIST = gql`
   mutation CreateList(
@@ -8,10 +8,10 @@ export const CREATE_LIST = gql`
     $parentList: JSONObject
   ) {
     createList(data: $data, user: $user, parentList: $parentList) {
-      ...ListFragment
+      ...ListFragmentShort
     }
   }
-  ${LIST_FRAGMENT}
+  ${LIST_FRAGMENT_SHORT}
 `;
 
 export const DELETE_LIST = gql`

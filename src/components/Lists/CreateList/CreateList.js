@@ -8,14 +8,15 @@ function CreateList({ user, parentList }) {
   const [form] = Form.useForm();
   const [createList, { loading, error, data }] = useMutation(CREATE_LIST, {
     update(cache, { data: { createList } }) {
+      console.log("CREATE LIST", createList);
       cache.modify({
         fields: {
-          lists(existingLists) {
+          list(existingLists) {
             const newListRef = cache.writeFragment({
               data: createList,
               fragment: LIST_FRAGMENT_SHORT,
             });
-            return { items: [...existingLists.items, newListRef] };
+            return newListRef;
           },
         },
       });

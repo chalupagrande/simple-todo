@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
-import { LISTS } from "~/lib/apollo/queries";
+import { LIST } from "~/lib/apollo/queries";
 import { UPDATE_LIST } from "~/lib/apollo/mutations";
 import { Alert, Button, Checkbox, Dropdown, Table, message } from "antd";
-import { CircularProgress, MoreOutlined } from "@ant-design/icons";
+import { MoreOutlined } from "@ant-design/icons";
 import { timeAgo, STATUS_ENUM, useInterval } from "~/lib/utils";
 import ListActionMenu from "~/components/Lists/ListTable/ListActionMenu";
 import styles from "./ListTable.module.css";
 
 function RecursiveListTable({ id, user, level, setParent }) {
   const [count, setCount] = useState(1);
-  console.log("ID", id);
 
   //   ___  _   _ ___ _____   __
   //  / _ \| | | | __| _ \ \ / /
@@ -18,15 +17,16 @@ function RecursiveListTable({ id, user, level, setParent }) {
   //  \__\_\\___/|___|_|_\ |_|
   //
 
-  const { loading, data, error } = useQuery(LISTS, {
+  const { loading, data, error } = useQuery(LIST, {
     skip: !user,
     fetchPolicy: "cache-and-network",
     variables: {
-      id,
+      id, // wont be passed if undefined
       auth0Id: user?.sub,
     },
   });
-  const lists = data?.lists?.items || [];
+  console.log("DATA FROM RECURSIVE LIST", data);
+  const items = data?.list?.children?.items;
 
   //
   // __  __ _   _ _____ _ _____ ___ ___  _  _
@@ -60,14 +60,16 @@ function RecursiveListTable({ id, user, level, setParent }) {
       render: (d, r) => (
         <div className={styles.listItem}>
           <span>{d}</span>
-          <span className={styles.timeAgo}>{timeAgo(r.lastStatusUpdate)}</span>
+          <span className={styles.timeAgo}>
+            {r.lastStatusUpdate ? timeAgo(r.lastStatusUpdate) : "--"}
+          </span>
         </div>
       ),
     },
     {
       title: "Done",
       dataIndex: "status",
-      key: "status",
+      key: "right",
       align: "center",
       render: (d, record) => (
         <Checkbox
@@ -107,7 +109,7 @@ function RecursiveListTable({ id, user, level, setParent }) {
       );
     },
     getCheckboxProps: (record) => ({
-      disabled: record.isRecipe, // Column configuration not to be checked
+      disabled: record.isParent, // Column configuration not to be checked
     }),
   };
 
@@ -116,7 +118,7 @@ function RecursiveListTable({ id, user, level, setParent }) {
     expandedRowRender: (d) => (
       <RecursiveListTable id={d.id} user={user} level={level + 1} />
     ),
-    rowExpandable: (d) => d.isRecipe,
+    rowExpandable: (d) => d.isParent,
   };
 
   /**
@@ -140,7 +142,7 @@ function RecursiveListTable({ id, user, level, setParent }) {
 
   useEffect(() => {
     if (data && setParent) {
-      setParent(data?.lists?.parent);
+      setParent(data?.list);
     }
   }, [data, setParent]);
 
@@ -150,7 +152,9 @@ function RecursiveListTable({ id, user, level, setParent }) {
   // |_|_\___|_|\_|___/|___|_|_\
   //
   if (level > 5) {
-    return <p>Too Deep</p>;
+    return (
+      <Alert message="You've gone too many layers deep! Try 'managing' one of the nested lists that contain this one to see its contents." />
+    );
   }
 
   return (
@@ -160,7 +164,7 @@ function RecursiveListTable({ id, user, level, setParent }) {
       rowSelection={rowSelection}
       expandable={expandable}
       columns={columns}
-      dataSource={lists}
+      dataSource={items}
       loading={loading}
       showHeader={level === 0}
       pagination={{

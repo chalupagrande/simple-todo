@@ -18,13 +18,13 @@ const ListModel = db.define("list", {
   },
   lastStatusUpdate: {
     type: Sequelize.DATE,
-    defaultValue: Date.now(),
+    defaultValue: null,
   },
   isDefault: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
-  isRecipe: {
+  isParent: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
