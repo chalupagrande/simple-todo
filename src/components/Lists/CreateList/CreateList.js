@@ -36,12 +36,9 @@ function CreateList({ user, parentList }) {
   }
 
   return (
-    <Form form={form} layout="vertical" onFinish={handleSubmit}>
-      <Form.Item label="Name" name="name" required>
+    <Form form={form} layout="horizontal" onFinish={handleSubmit}>
+      <Form.Item label="Add Item" name="name" required>
         <Input placeholder="My cool List" autoComplete="off"></Input>
-      </Form.Item>
-      <Form.Item name="isRecipe" valuePropName="checked">
-        <Checkbox>Is Recipe</Checkbox>
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">

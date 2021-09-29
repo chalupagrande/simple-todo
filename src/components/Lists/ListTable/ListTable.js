@@ -3,7 +3,7 @@ import { Button, Table } from "antd";
 import { useInterval } from "~/lib/utils";
 import styles from "./ListTable.module.css";
 
-function ListTable({ lists, columns }) {
+function ListTable({ lists, columns, expandable }) {
   const [count, setCount] = useState(1);
   const [showBulkActions, setShowBulkActions] = useState(false);
   const [showSubLists, setShowSubLists] = useState(false);
@@ -23,10 +23,10 @@ function ListTable({ lists, columns }) {
   };
 
   // determines how rows are expandable
-  const expandable = {
-    expandedRowRender: (d) => <p>{d.status}</p>,
-    rowExpandable: (d) => d.isRecipe,
-  };
+  // const expandable = {
+  //   expandedRowRender: (d) => <p>{d.status}</p>,
+  //   rowExpandable: (d) => d.isRecipe,
+  // };
 
   /**
    *  _    ___ ___ _____ ___ _  _ ___ ___  ___
@@ -55,7 +55,7 @@ function ListTable({ lists, columns }) {
           type="primary"
           onClick={() => setShowSubLists(!showSubLists)}
         >
-          {showBulkActions ? "Hide" : "Show"} Sublists
+          {!!showBulkActions ? "Hide" : "Show"} Sublists
         </Button>
       </div>
       <Table

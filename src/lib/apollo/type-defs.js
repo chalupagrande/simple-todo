@@ -24,8 +24,9 @@ export const typeDefs = gql`
     status: StatusTypes
     owner: User
     shared: UserListResponse
-    isRecipe: Boolean
     lastStatusUpdate: Date
+    isRecipe: Boolean
+    isDefault: Boolean
   }
 
   type DeleteListResponse {

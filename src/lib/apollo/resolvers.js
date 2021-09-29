@@ -6,7 +6,7 @@ export const resolvers = {
   Query: {
     // Gets Lists owned by a User
     async lists(_, { id, auth0Id, filter }) {
-      let list = await List.findOne({
+      const list = await List.findOne({
         where: id ? { id } : { isDefault: true },
         include: [
           {
@@ -32,7 +32,7 @@ export const resolvers = {
       });
       if (wasCreated) {
         // creates a default list for the user
-        let defaultList = await List.create({
+        const defaultList = await List.create({
           name: "_DEFAULT_",
           isRecipe: true,
           isDefault: true,
@@ -56,8 +56,8 @@ export const resolvers = {
         const query = {};
         if (!parentList) query.isDefault = true;
         else query.id = parentList.id;
-        let parents = await owner.getLists({ where: query });
-        let parent = parents[0];
+        const parents = await owner.getLists({ where: query });
+        const parent = parents[0];
 
         // create List
         const list = await List.create({
@@ -65,8 +65,11 @@ export const resolvers = {
           addedBy: owner.id,
         });
 
+        // update relationships
+        parent.isRecipe = true;
         parent.addChild(list);
         owner.addList(list);
+        await parent.save();
 
         const finalList = list.toJSON();
         finalList.owner = owner;
@@ -80,8 +83,7 @@ export const resolvers = {
     async updateList(_, { id, data }) {
       try {
         const list = await List.findOne({ where: { id } });
-        console.log("DATA", data);
-        for (let [key, value] of Object.entries(data)) {
+        for (const [key, value] of Object.entries(data)) {
           if (key === "id") continue;
           else {
             list.set(key, value);
@@ -91,7 +93,8 @@ export const resolvers = {
             list.set("lastStatusUpdate", new Date());
           }
         }
-        let final = await list.save();
+
+        const final = await list.save();
         return final.toJSON();
       } catch (err) {
         console.error(err);

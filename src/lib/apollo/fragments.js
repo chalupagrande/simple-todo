@@ -13,6 +13,7 @@ export const LIST_FRAGMENT_SHORT = gql`
     isRecipe
     status
     lastStatusUpdate
+    isDefault
   }
 `;
 
@@ -23,6 +24,7 @@ export const LIST_FRAGMENT = gql`
     isRecipe
     status
     lastStatusUpdate
+    isDefault
     owner {
       id
       email

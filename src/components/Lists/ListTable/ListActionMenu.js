@@ -1,7 +1,7 @@
 import React from "react";
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/router";
-import { Menu } from "antd";
+import { Menu, message } from "antd";
 import { DELETE_LIST, UPDATE_LIST } from "~/lib/apollo/mutations";
 import {
   DeleteOutlined,
@@ -32,27 +32,10 @@ function ListActionMenu({ record }) {
     },
   });
 
-  const [updateList, { error: updateError }] = useMutation(UPDATE_LIST);
-
-  //  _  _   _   _  _ ___  _    ___ ___  ___
-  // | || | /_\ | \| |   \| |  | __| _ \/ __|
-  // | __ |/ _ \| .` | |) | |__| _||   /\__ \
-  // |_||_/_/ \_\_|\_|___/|____|___|_|_\|___/
-  //
-
   function handleDelete() {
     deleteList({
       variables: {
         id: record.id,
-      },
-    });
-  }
-
-  function handleChange(vars) {
-    updateList({
-      variables: {
-        id: record.id,
-        data: vars,
       },
     });
   }
@@ -68,20 +51,21 @@ function ListActionMenu({ record }) {
         Delete
       </Menu.Item>
       <Menu.Item
-        icon={<EditOutlined />}
+        icon={<SnippetsOutlined />}
         onClick={() => router.push(`/lists/${record.id}`)}
+      >
+        Manage
+      </Menu.Item>
+      <Menu.Item
+        icon={<EditOutlined />}
+        onClick={() =>
+          message.info(
+            "This dont work yet. Should make name a dialog box for editing"
+          )
+        }
       >
         Edit
       </Menu.Item>
-      {!record.isRecipe && (
-        <Menu.Item
-          icon={<SnippetsOutlined />}
-          onClick={() => handleChange({ isRecipe: true })}
-        >
-          Make Recipe
-        </Menu.Item>
-      )}
-      {record.isRecipe && <Menu.Item>Manage</Menu.Item>}
     </Menu>
   );
 }
