@@ -1,4 +1,10 @@
 .wrapper {
   min-height: 100vh;
   background-color: #ebeef7;
+  padding: 2%;
+}
+@media (min-width: 700px) {
+  .wrapper {
+    padding: 1.2rem;
+  }
 }

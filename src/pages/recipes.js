@@ -11,7 +11,12 @@ function Recipes({ user }) {
     <div className={styles.container}>
       <main className={styles.main}>
         <Title level={4}>Recipes</Title>
-        <RecursiveListTable QUERY={RECIPES} level={0} user={user} />
+        <RecursiveListTable
+          QUERY={RECIPES}
+          level={0}
+          user={user}
+          itemsAccessorFunction={(d) => d?.lists?.items || []}
+        />
       </main>
     </div>
   );

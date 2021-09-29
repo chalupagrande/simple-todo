@@ -7,8 +7,17 @@ import { MoreOutlined } from "@ant-design/icons";
 import { timeAgo, STATUS_ENUM, useInterval } from "~/lib/utils";
 import ListActionMenu from "~/components/Lists/ListTable/ListActionMenu";
 import styles from "./ListTable.module.css";
+import PropTypes from "prop-types";
 
-function RecursiveListTable({ id, user, level, setParent }) {
+function RecursiveListTable({
+  id,
+  user,
+  level,
+  setParent,
+  QUERY,
+  showNestedLists,
+  itemsAccessorFunction,
+}) {
   const [count, setCount] = useState(1);
 
   //   ___  _   _ ___ _____   __
@@ -17,7 +26,7 @@ function RecursiveListTable({ id, user, level, setParent }) {
   //  \__\_\\___/|___|_|_\ |_|
   //
 
-  const { loading, data, error } = useQuery(LIST, {
+  const { loading, data, error } = useQuery(QUERY || LIST, {
     skip: !user,
     fetchPolicy: "cache-and-network",
     variables: {
@@ -25,8 +34,7 @@ function RecursiveListTable({ id, user, level, setParent }) {
       auth0Id: user?.sub,
     },
   });
-  console.log("DATA FROM RECURSIVE LIST", data);
-  const items = data?.list?.children?.items;
+  const items = itemsAccessorFunction(data);
 
   //
   // __  __ _   _ _____ _ _____ ___ ___  _  _
@@ -37,13 +45,22 @@ function RecursiveListTable({ id, user, level, setParent }) {
   //
   const [updateList, { error: updateError }] = useMutation(UPDATE_LIST);
 
-  function handleChange(id, data) {
+  //  _  _   _   _  _ ___  _    ___ ___  ___
+  // | || | /_\ | \| |   \| |  | __| _ \/ __|
+  // | __ |/ _ \| .` | |) | |__| _||   /\__ \
+  // |_||_/_/ \_\_|\_|___/|____|___|_|_\|___/
+  //
+  function handleStatusChange(id, data) {
     updateList({
       variables: {
         id,
         data,
       },
     });
+  }
+
+  function markAllAsDone(record) {
+    alert("TODO: make all immediate sublists as DONE");
   }
 
   //  ___   _ _____ _     ___ ___ ___ ___
@@ -56,7 +73,7 @@ function RecursiveListTable({ id, user, level, setParent }) {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      width: "55%",
+      width: "80%",
       render: (d, r) => (
         <div className={styles.listItem}>
           <span>{d}</span>
@@ -76,7 +93,7 @@ function RecursiveListTable({ id, user, level, setParent }) {
           onChange={() => {
             const nextStatus =
               STATUS_ENUM[[...STATUS_ENUM].indexOf(record.status) + 1];
-            handleChange(record.id, { status: nextStatus });
+            handleStatusChange(record.id, { status: nextStatus });
           }}
           checked={d !== "NOT_STARTED"}
           indeterminate={d === "STARTED"}
@@ -162,7 +179,7 @@ function RecursiveListTable({ id, user, level, setParent }) {
       rowClassName={(d) => (d.status === "COMPLETED" ? styles.completed : "")}
       rowKey={(d) => d.id}
       rowSelection={rowSelection}
-      expandable={expandable}
+      expandable={showNestedLists && expandable}
       columns={columns}
       dataSource={items}
       loading={loading}
@@ -174,5 +191,21 @@ function RecursiveListTable({ id, user, level, setParent }) {
     />
   );
 }
+
+RecursiveListTable.defaultProps = {
+  level: 0,
+  showNestedLists: true,
+  itemsAccessorFunction: (d) => d?.list?.children?.items || [],
+};
+
+RecursiveListTable.propTypes = {
+  id: PropTypes.string,
+  user: PropTypes.object,
+  level: PropTypes.number,
+  setParent: PropTypes.func,
+  // QUERY: PropTypes.
+  showNestedLists: PropTypes.bool,
+  itemsAccessorFunction: PropTypes.func.isRequired,
+};
 
 export default RecursiveListTable;

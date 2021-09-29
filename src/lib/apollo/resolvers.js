@@ -52,7 +52,7 @@ export const resolvers = {
       if (wasCreated) {
         // creates a default list for the user
         const defaultList = await List.create({
-          name: "_DEFAULT_",
+          name: "Main",
           isParent: true,
           isDefault: true,
         });

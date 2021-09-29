@@ -11,14 +11,13 @@ import {
 } from "@ant-design/icons";
 import styles from "./ListActionMenu.module.css";
 
-function ListActionMenu({ record }) {
+function ListActionMenu({ record, level }) {
   const router = useRouter();
 
-  //
   // __  __ _   _ _____ _ _____ ___ ___  _  _
-  //|  \/  | | | |_   _/_\_   _|_ _/ _ \| \| |
-  //| |\/| | |_| | | |/ _ \| |  | | (_) | .` |
-  //|_|  |_|\___/  |_/_/ \_\_| |___\___/|_|\_|
+  // |  \/  | | | |_   _/_\_   _|_ _/ _ \| \| |
+  // | |\/| | |_| | | |/ _ \| |  | | (_) | .` |
+  // |_|  |_|\___/  |_/_/ \_\_| |___\___/|_|\_|
   //
   const [deleteList, { loading, data, error }] = useMutation(DELETE_LIST, {
     update(cache) {
@@ -56,6 +55,22 @@ function ListActionMenu({ record }) {
       >
         Manage
       </Menu.Item>
+      {record.isParent && (
+        <>
+          <Menu.Item
+            icon={<SnippetsOutlined />}
+            onClick={() => router.push(`/lists/${record.id}`)}
+          >
+            Mark all as DONE
+          </Menu.Item>
+          <Menu.Item
+            icon={<SnippetsOutlined />}
+            onClick={() => router.push(`/lists/${record.id}`)}
+          >
+            Mark all as NOT DONE
+          </Menu.Item>
+        </>
+      )}
       <Menu.Item
         icon={<EditOutlined />}
         onClick={() =>

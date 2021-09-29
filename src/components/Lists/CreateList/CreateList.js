@@ -43,7 +43,7 @@ function CreateList({ user, parentList }) {
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">
-          Submit
+          Add
         </Button>
       </Form.Item>
     </Form>

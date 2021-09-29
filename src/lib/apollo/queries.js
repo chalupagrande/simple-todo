@@ -1,5 +1,5 @@
 import { gql } from "graphql-tag";
-import { LIST_FRAGMENT } from "./fragments";
+import { LIST_FRAGMENT, LIST_FRAGMENT_SHORT } from "./fragments";
 
 export const LIST = gql`
   query GetList($id: ID, $auth0Id: String!, $filter: ListFilter) {
@@ -31,11 +31,11 @@ export const CHECK_USER = gql`
 
 export const RECIPES = gql`
   query GetRecipes($auth0Id: String!) {
-    lists(auth0Id: $auth0Id, filter: { isDefault: false, isParent: true }) {
+    lists(auth0Id: $auth0Id, filter: { isParent: true }) {
       items {
-        ...ListFragment
+        ...ListFragmentShort
       }
     }
   }
-  ${LIST_FRAGMENT}
+  ${LIST_FRAGMENT_SHORT}
 `;

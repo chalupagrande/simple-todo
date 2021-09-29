@@ -5,9 +5,22 @@ A simple TODO app to demonstrate the following skills:
 - Nextjs / React
 - Apollo Client
 - Apollo Server
-- Mongo DB
+- Sequelize
 - AntD
 - Auth0
+- Recursion
+- Database design
+- PropTypes
+- Design
+- EsLint
+
+### TODO:
+
+- [x] understand the irony of writing a todo list in the readme of a todo app
+- [ ] Add a "Mark all as DONE" functionality
+- [ ] Add a "Mark all as UNDONE" functionality
+- [ ] Add list sharing
+- [ ] Add ability to add Recipes into other lists.
 
 ### Bug References:
 
