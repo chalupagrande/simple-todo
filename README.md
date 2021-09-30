@@ -17,10 +17,26 @@ A simple TODO app to demonstrate the following skills:
 ### TODO:
 
 - [x] understand the irony of writing a todo list in the readme of a todo app
+- [ ] Add list sharing
+- [ ] ** NOTE! ** Recipes are different than lists with children ** Note **
+- [ ] Add ability to copy one list into another - with timestamps OR without timestamps
 - [ ] Add a "Mark all as DONE" functionality
 - [ ] Add a "Mark all as UNDONE" functionality
-- [ ] Add list sharing
 - [ ] Add ability to add Recipes into other lists.
+- [ ] Add due date
+- [ ] Add guest mode
+- [ ] Convert into Native app
+- [ ] Dockerize and deploy
+- [ ] Add deadline to lists (and a calendar of deadlines)
+  - optional merge feature (detect items that have the same name (or similar names that are in another list))
+- [ ] Lists that automatically detect when all of their children have been completed
+  - (or get put in a STARTED state when one or more of the items have been started)
+- [ ] Give a progress bar on how many of the items have been completed.
+- [ ] Add tags to lits and filter in recipes Page
+- [ ] Filters on the list
+- [ ] Show and hide bulk options. Bulk Delete, Mark Done, Reset Last Status Update, etc...
+- [ ] Show and hide sub-lists
+- [ ] Make them draggable (to reorder)
 
 ### Bug References:
 
