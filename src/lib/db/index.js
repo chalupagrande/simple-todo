@@ -13,20 +13,20 @@ ListModel.belongsToMany(UserModel, {
 
 //
 UserModel.hasMany(ListModel, {
-  foreignKey: "addedBy",
+  foreignKey: "added_by",
 });
 ListModel.belongsTo(UserModel);
 
 // many to many List:List
 ListModel.belongsToMany(ListModel, {
   as: "children",
-  foreignKey: "subLists",
+  foreignKey: "sub_lists",
   through: "lists_lists",
 });
 
 ListModel.belongsToMany(ListModel, {
   as: "parents",
-  foreignKey: "parentLists",
+  foreignKey: "parent_list",
   through: "lists_lists",
 });
 

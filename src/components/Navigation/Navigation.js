@@ -54,6 +54,11 @@ function Navigation() {
               </li>
               <li>
                 <Button type="primary" onClick={close}>
+                  <Link href="/shared">Shared</Link>
+                </Button>
+              </li>
+              <li>
+                <Button type="primary" onClick={close}>
                   <Link href="/profile">Profile</Link>
                 </Button>
               </li>

@@ -1,9 +1,13 @@
 import { gql } from "graphql-tag";
-import { LIST_FRAGMENT, LIST_FRAGMENT_SHORT } from "./fragments";
+import {
+  LIST_FRAGMENT,
+  LIST_FRAGMENT_SHORT,
+  USER_FRAGMENT_SHORT,
+} from "./fragments";
 
 export const LIST = gql`
-  query GetList($id: ID, $auth0Id: String!, $filter: ListFilter) {
-    list(id: $id, auth0Id: $auth0Id, filter: $filter) {
+  query GetList($id: ID, $auth_id: String!, $filter: ListFilter) {
+    list(id: $id, auth_id: $auth_id, filter: $filter) {
       ...ListFragment
     }
   }
@@ -11,8 +15,8 @@ export const LIST = gql`
 `;
 
 export const LISTS = gql`
-  query GetLists($auth0Id: String!, $filter: ListFilter) {
-    lists(auth0Id: $auth0Id, filter: $filter) {
+  query GetLists($auth_id: String!, $filter: ListFilter) {
+    lists(auth_id: $auth_id, filter: $filter) {
       items {
         ...ListFragment
       }
@@ -29,9 +33,34 @@ export const CHECK_USER = gql`
   }
 `;
 
+/**
+ * TODO: Make sure this is right
+ */
 export const RECIPES = gql`
-  query GetRecipes($auth0Id: String!) {
-    lists(auth0Id: $auth0Id, filter: { isParent: true }) {
+  query GetRecipes($auth_id: String!) {
+    lists(auth_id: $auth_id, filter: { is_recipe: true }) {
+      items {
+        ...ListFragmentShort
+      }
+    }
+  }
+  ${LIST_FRAGMENT_SHORT}
+`;
+
+export const USERS = gql`
+  query Users($filter: UserFilter) {
+    users(filter: $filter) {
+      items {
+        ...UserFragmentShort
+      }
+    }
+  }
+  ${USER_FRAGMENT_SHORT}
+`;
+
+export const SHARED = gql`
+  query GetShared($auth_id: String!) {
+    shared(auth_id: $auth_id) {
       items {
         ...ListFragmentShort
       }

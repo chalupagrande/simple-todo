@@ -17,7 +17,7 @@ A simple TODO app to demonstrate the following skills:
 ### TODO:
 
 - [x] understand the irony of writing a todo list in the readme of a todo app
-- [ ] Add list sharing
+- [x] Add list sharing
 - [ ] ** NOTE! ** Recipes are different than lists with children ** Note **
 - [ ] Add ability to copy one list into another - with timestamps OR without timestamps
 - [ ] Add a "Mark all as DONE" functionality
@@ -63,10 +63,10 @@ A simple TODO app to demonstrate the following skills:
         // const { req, res } = ctx;
         // const { user } = getSession(req, res);
         // const defaultList = await List.findOne({
-        // where: { isDefault: true },
+        // where: { is_default: true },
         // include: [
         // {
-        // where: { auth0Id: user.sub },
+        // where: { auth_id: user.sub },
         // model: User,
         // },
         // ],

@@ -13,7 +13,7 @@ function Layout({ children }) {
       console.log("CHECKING USER");
       checkUser({
         variables: {
-          user: { ...user, auth0Id: user.sub },
+          user: { ...user, auth_id: user.sub },
         },
       });
     }

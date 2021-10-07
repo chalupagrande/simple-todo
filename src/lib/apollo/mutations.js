@@ -30,3 +30,11 @@ export const UPDATE_LIST = gql`
   }
   ${LIST_FRAGMENT_SHORT}
 `;
+
+export const SHARE_LIST = gql`
+  mutation ShareList($id: ID!, $userId: ID!) {
+    shareList(id: $id, userId: $userId) {
+      success
+    }
+  }
+`;

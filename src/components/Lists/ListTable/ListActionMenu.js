@@ -44,26 +44,30 @@ function ListActionMenu({ record, level }) {
   return (
     <Menu className={styles.listActionMenu}>
       <Menu.Item
+        key={1}
         onClick={handleDelete}
         icon={loading ? <LoadingOutlined spin /> : <DeleteOutlined />}
       >
         Delete
       </Menu.Item>
       <Menu.Item
+        key={2}
         icon={<SnippetsOutlined />}
         onClick={() => router.push(`/lists/${record.id}`)}
       >
         Manage
       </Menu.Item>
-      {record.isParent && (
+      {record.is_parent && (
         <>
           <Menu.Item
+            key={3}
             icon={<SnippetsOutlined />}
             onClick={() => router.push(`/lists/${record.id}`)}
           >
             Mark all as DONE
           </Menu.Item>
           <Menu.Item
+            key={4}
             icon={<SnippetsOutlined />}
             onClick={() => router.push(`/lists/${record.id}`)}
           >
@@ -72,6 +76,7 @@ function ListActionMenu({ record, level }) {
         </>
       )}
       <Menu.Item
+        key={5}
         icon={<EditOutlined />}
         onClick={() =>
           message.info(

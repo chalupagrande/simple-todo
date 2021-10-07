@@ -4,10 +4,10 @@ export const LIST_FRAGMENT_SHORT = gql`
   fragment ListFragmentShort on List {
     id
     name
-    isParent
+    is_parent
     status
-    lastStatusUpdate
-    isDefault
+    last_status_update
+    is_default
   }
 `;
 
@@ -21,4 +21,13 @@ export const LIST_FRAGMENT = gql`
     }
   }
   ${LIST_FRAGMENT_SHORT}
+`;
+
+export const USER_FRAGMENT_SHORT = gql`
+  fragment UserFragmentShort on User {
+    id
+    name
+    email
+    auth_id
+  }
 `;

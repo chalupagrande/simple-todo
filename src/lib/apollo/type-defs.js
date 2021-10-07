@@ -8,9 +8,23 @@ export const typeDefs = gql`
 
   input ListFilter {
     id: ID
-    isParent: Boolean
-    isDefault: Boolean
+    is_parent: Boolean
+    is_default: Boolean
     name: String
+  }
+
+  input UserFilter {
+    name: StringPredicate
+    email: StringPredicate
+  }
+
+  input StringPredicate {
+    contains: String
+    equals: String
+    not_equals: String
+    is_empty: Boolean
+    is_not_empty: Boolean
+    # Add other search things
   }
 
   type ListResponse {
@@ -23,9 +37,9 @@ export const typeDefs = gql`
     status: StatusTypes
     owner: User
     shared: UserListResponse
-    lastStatusUpdate: Date
-    isParent: Boolean
-    isDefault: Boolean
+    last_status_update: Date
+    is_parent: Boolean
+    is_default: Boolean
     children: ListResponse
   }
 
@@ -34,9 +48,11 @@ export const typeDefs = gql`
   }
 
   type Query {
-    list(id: ID, auth0Id: String!, filter: ListFilter): List
-    lists(auth0Id: String!, filter: ListFilter): ListResponse
+    list(id: ID, auth_id: String!, filter: ListFilter): List
+    lists(auth_id: String!, filter: ListFilter): ListResponse
+    shared(auth_id: String!): ListResponse
     checkUser(user: JSONObject!): SuccessResponse
+    users(filter: UserFilter): UserListResponse
   }
 
   type Mutation {
@@ -47,11 +63,12 @@ export const typeDefs = gql`
     ): List
     deleteList(id: ID!): DeleteListResponse
     updateList(id: ID!, data: JSONObject!): List
+    shareList(id: ID!, userId: ID!): SuccessResponse
   }
 
   type User {
     id: ID
-    auth0Id: String
+    auth_id: String
     name: String
     email: String
   }

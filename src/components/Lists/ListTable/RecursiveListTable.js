@@ -31,7 +31,7 @@ function RecursiveListTable({
     fetchPolicy: "cache-and-network",
     variables: {
       id, // wont be passed if undefined
-      auth0Id: user?.sub,
+      auth_id: user?.sub,
     },
   });
   const items = itemsAccessorFunction(data);
@@ -78,7 +78,7 @@ function RecursiveListTable({
         <div className={styles.listItem}>
           <span>{d}</span>
           <span className={styles.timeAgo}>
-            {r.lastStatusUpdate ? timeAgo(r.lastStatusUpdate) : "--"}
+            {r.last_status_update ? timeAgo(r.last_status_update) : "--"}
           </span>
         </div>
       ),
@@ -126,7 +126,7 @@ function RecursiveListTable({
       );
     },
     getCheckboxProps: (record) => ({
-      disabled: record.isParent, // Column configuration not to be checked
+      disabled: record.is_parent, // Column configuration not to be checked
     }),
   };
 
@@ -135,7 +135,7 @@ function RecursiveListTable({
     expandedRowRender: (d) => (
       <RecursiveListTable id={d.id} user={user} level={level + 1} />
     ),
-    rowExpandable: (d) => d.isParent,
+    rowExpandable: (d) => d.is_parent,
   };
 
   /**
