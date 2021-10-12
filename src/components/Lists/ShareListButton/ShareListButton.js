@@ -3,6 +3,7 @@ import { AutoComplete, Button, Modal, Typography } from "antd";
 import { useDebounce } from "~/lib/utils";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { SHARE_LIST } from "~/lib/apollo/mutations";
+import { ShareAltOutlined } from "@ant-design/icons";
 import { USERS } from "~/lib/apollo/queries";
 const { Text } = Typography;
 const { Option } = AutoComplete;
@@ -84,12 +85,9 @@ function ShareListButton({ list }) {
         onCancel={() => setVisible(false)}
         okText={"Share"}
       >
-        <Text>
-          <p>
-            Note: Sharing a list CANNOT be undone. Once a user is given access,
-            they will be able to add and edit lists as they please.
-          </p>
-        </Text>
+        <p>
+          <Text>Search user by email:</Text>
+        </p>
         <AutoComplete
           value={searchTerm}
           options={options}
@@ -97,10 +95,20 @@ function ShareListButton({ list }) {
           placeholder="Search User"
           style={{
             width: "200px",
+            marginBottom: "1rem",
           }}
-        ></AutoComplete>
+        />
+        <Text type="secondary">
+          <p>
+            <strong>Note:</strong> Sharing a list CANNOT be undone. Once a user
+            is given access, they will be able to add and edit lists as they
+            please.
+          </p>
+        </Text>
       </Modal>
-      <Button onClick={() => setVisible(!visible)}>Share List</Button>
+      <Button icon={<ShareAltOutlined />} onClick={() => setVisible(!visible)}>
+        Share
+      </Button>
     </>
   );
 }

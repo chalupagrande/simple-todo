@@ -110,8 +110,9 @@ export const resolvers = {
 
     // search users
     async users(_, { filter }) {
-      const where = makeWhereFromStringFilter(filter);
-      const userList = User.findAll({ where });
+      const userList = await prisma.users.findMany({
+        where: filter,
+      });
       return { items: userList };
     },
   },
