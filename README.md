@@ -78,3 +78,11 @@ A simple TODO app to demonstrate the following skills:
         // };
         // },
     ```
+- Prisma Bug
+  - When running `npx prisma db pull`, it pulls in an error with the users table
+  - ```
+      model users {
+      id         String       @id @db.Char(36) # THIS IS THE CORRECT WAY (pulls in as @db.VarChar(36))
+      name       String       @db.VarChar(255)
+      email      String       @unique @db.VarChar(255)
+    ```

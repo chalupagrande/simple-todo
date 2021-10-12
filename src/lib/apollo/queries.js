@@ -6,8 +6,8 @@ import {
 } from "./fragments";
 
 export const LIST = gql`
-  query GetList($id: ID, $auth_id: String!, $filter: ListFilter) {
-    list(id: $id, auth_id: $auth_id, filter: $filter) {
+  query GetList($id: ID, $filter: ListFilter) {
+    list(id: $id, filter: $filter) {
       ...ListFragment
     }
   }

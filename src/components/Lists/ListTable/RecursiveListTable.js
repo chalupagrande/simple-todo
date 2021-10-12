@@ -30,19 +30,22 @@ function RecursiveListTable({
     skip: !user,
     fetchPolicy: "cache-and-network",
     variables: {
-      id, // wont be passed if undefined
-      auth_id: user?.sub,
+      id,
+      filter: !id
+        ? {
+            AND: [{ author: { equals: user?.sub } }, { is_default: true }],
+          }
+        : undefined,
     },
   });
   const items = itemsAccessorFunction(data);
 
-  //
   // __  __ _   _ _____ _ _____ ___ ___  _  _
   // |  \/  | | | |_   _/_\_   _|_ _/ _ \| \| |
   // | |\/| | |_| | | |/ _ \| |  | | (_) | .` |
   // |_|  |_|\___/  |_/_/ \_\_| |___\___/|_|\_|
   //
-  //
+
   const [updateList, { error: updateError }] = useMutation(UPDATE_LIST);
 
   //  _  _   _   _  _ ___  _    ___ ___  ___
@@ -50,6 +53,7 @@ function RecursiveListTable({
   // | __ |/ _ \| .` | |) | |__| _||   /\__ \
   // |_||_/_/ \_\_|\_|___/|____|___|_|_\|___/
   //
+
   function handleStatusChange(id, data) {
     updateList({
       variables: {
@@ -68,6 +72,7 @@ function RecursiveListTable({
   // | |) / _ \| |/ _ \  |  _/   / _||  _/
   // |___/_/ \_\_/_/ \_\ |_| |_|_\___|_|
   //
+
   const columns = [
     {
       title: "Name",
@@ -82,6 +87,12 @@ function RecursiveListTable({
           </span>
         </div>
       ),
+    },
+    {
+      title: "By",
+      dataIndex: "author",
+      key: "author",
+      render: (d, r) => d?.name,
     },
     {
       title: "Done",

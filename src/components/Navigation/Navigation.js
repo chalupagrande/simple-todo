@@ -1,12 +1,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { useUser } from "@auth0/nextjs-auth0";
-import styles from "./styles.module.css";
-import { Button, Drawer, Typography } from "antd";
-const { Title } = Typography;
+import { UserOutlined } from "@ant-design/icons";
+import { Menu, Typography } from "antd";
 
-function Navigation() {
-  const { user } = useUser();
+function Navigation({ user }) {
   const [open, setOpen] = useState(false);
 
   function toggleOpen() {
@@ -18,64 +15,35 @@ function Navigation() {
   }
 
   return (
-    <nav className={styles.menu}>
-      <div className={styles.menuButton}>
-        {open ? (
-          <Button type="primary" onClick={toggleOpen}>
-            Close
-          </Button>
-        ) : (
-          <Button type="primary" onClick={toggleOpen}>
-            Menu
-          </Button>
-        )}
-      </div>
-      <Title className={styles.menuTitle} level={2}>
-        TODO
-      </Title>
-      <Drawer placement="left" closable={true} onClose={close} visible={open}>
-        <ul className={styles.navigation}>
-          <li>
-            <Button type="primary" onClick={close}>
-              <Link href="/">Home</Link>
-            </Button>
-          </li>
-          {user ? (
-            <>
-              <li>
-                <Button type="primary" onClick={close}>
-                  <Link href="/recipes">Recipes</Link>
-                </Button>
-              </li>
-              <li>
-                <Button type="primary" onClick={close}>
-                  <Link href="/lists">Lists</Link>
-                </Button>
-              </li>
-              <li>
-                <Button type="primary" onClick={close}>
-                  <Link href="/shared">Shared</Link>
-                </Button>
-              </li>
-              <li>
-                <Button type="primary" onClick={close}>
-                  <Link href="/profile">Profile</Link>
-                </Button>
-              </li>
-              <li>
-                <Button type="primary" onClick={close}>
-                  <a href="/api/auth/logout">Logout</a>
-                </Button>
-              </li>
-            </>
-          ) : (
-            <li>
-              <a href="/api/auth/login">Login</a>
-            </li>
-          )}
-        </ul>
-      </Drawer>
-    </nav>
+    <Menu
+      mode="inline"
+      defaultSelectedKeys={["4"]}
+      style={{ margin: 0, padding: 0 }}
+    >
+      {user ? (
+        <>
+          <Menu.Item key="1" icon={<UserOutlined />}>
+            <Link href="/profile">Profile</Link>
+          </Menu.Item>
+          <Menu.Item key="2" icon={<UserOutlined />}>
+            <Link href="/recipes">Recipes</Link>
+          </Menu.Item>
+          <Menu.Item key="3" icon={<UserOutlined />}>
+            <Link href="/lists">Lists</Link>
+          </Menu.Item>
+          <Menu.Item key="4" icon={<UserOutlined />}>
+            <Link href="/shared">Shared</Link>
+          </Menu.Item>
+          <Menu.Item key="5" icon={<UserOutlined />}>
+            <a href="/api/auth/logout">Logout</a>
+          </Menu.Item>
+        </>
+      ) : (
+        <Menu.Item key="6" icon={<UserOutlined />}>
+          <a href="/api/auth/login">Login</a>
+        </Menu.Item>
+      )}
+    </Menu>
   );
 }
 

@@ -1,6 +1,8 @@
 import React from "react";
 import Head from "next/head";
 import styles from "~/styles/Home.module.css";
+import { Typography } from "antd";
+const { Title, Text } = Typography;
 
 function Home() {
   return (
@@ -12,7 +14,8 @@ function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h3>Welcome to TODO</h3>
+        <Title>Todo</Title>
+        <Text>Welcome to TODO</Text>
       </main>
     </div>
   );

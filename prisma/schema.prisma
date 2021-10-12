@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id                  String       @id @db.Char(30)
+  name                String       @db.VarChar(255)
+  email               String       @unique @db.VarChar(255)
+  created_at          DateTime     @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime     @default(now()) @db.Timestamptz(6)
+  lists_authored      lists[]
+  lists_owned         user_lists[]
+}
+
+model lists {
+  id                  String              @id @db.Char(36)
+  name                String              @db.VarChar(255)
+  status              enum_lists_status?  @default(NOT_STARTED)
+  last_status_update  DateTime?           @db.Timestamptz(6)
+  is_default          Boolean?            @default(false)
+  is_parent           Boolean?            @default(false)
+  created_at          DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime            @default(now()) @db.Timestamptz(6)
+  author              String?             @db.Char(30)
+  users               users?              @relation(fields: [author], references: [id])
+  children            list_lists[]        @relation("parents")
+  parents             list_lists[]        @relation("children")
+  owners              user_lists[]
+}
+
+model user_lists {
+  user_id       String     @db.Char(30)
+  list_id       String     @db.Char(36)
+  lists         lists      @relation(fields: [list_id], references: [id], onDelete: Cascade)
+  users         users      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, list_id])
+}
+
+model list_lists {
+  child_id      String     @db.Char(36)
+  parent_id     String     @db.Char(36)
+  child         lists      @relation("children", fields: [child_id], references: [id], onDelete: Cascade)
+  parent        lists      @relation("parents", fields: [parent_id], references: [id], onDelete: Cascade)
+
+  @@id([child_id, parent_id])
+}
+
+enum enum_lists_status {
+  NOT_STARTED
+  STARTED
+  COMPLETED
+}

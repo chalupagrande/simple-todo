@@ -1,55 +1,67 @@
-import db from "~/lib/db";
-import List from "~/lib/db/models/ListModel";
-import User from "~/lib/db/models/UserModel";
-import { Op } from "sequelize";
+import { v4 as uuid } from "uuid";
+import { PrismaClient } from "@prisma/client";
+import { mapIncludesToItems } from "~/lib/utils";
+const prisma = new PrismaClient();
 
 export const resolvers = {
   Query: {
     // Gets List owned by a User
-    async list(_, { id, auth_id, filter }) {
-      const list = await List.findOne({
-        where: id ? { id } : filter,
-        include: [
-          {
-            model: List,
-            as: "children",
+    async list(_, { id, filter }) {
+      let where;
+      if (id) {
+        where = { id };
+      } else {
+        where = filter;
+      }
+
+      try {
+        const finalList = await prisma.lists.findFirst({
+          where,
+          include: {
+            owners: {
+              select: {
+                users: true,
+              },
+            },
+            children: {
+              select: {
+                child: true,
+              },
+            },
           },
-          {
-            model: User,
-            where: { auth_id },
-          },
-        ],
-      });
-      const final = list.toJSON();
-      final.children = { items: final.children };
-      return final;
+        });
+        finalList.owners = mapIncludesToItems(finalList.owners);
+        finalList.children = mapIncludesToItems(finalList.children);
+        return finalList;
+      } catch (err) {
+        console.log("ERROR", err.message);
+      }
     },
     // get multiple lists
-    async lists(_, { auth_id, filter }) {
-      const lists = await List.findAll({
-        where: filter || {},
-        include: [
-          {
-            model: List,
-            as: "children",
+    /**
+     *
+     * NOT BEING USED
+     *
+     */
+    async lists(_, { filter }) {
+      try {
+        const finalLists = await prisma.lists.findMany({
+          where: filter || {},
+          include: {
+            owners: true,
           },
-          {
-            model: User,
-            where: { auth_id },
-          },
-        ],
-      });
-      return { items: lists };
+        });
+        return { items: finalLists };
+      } catch (err) {
+        console.log("ERROR", err.message);
+      }
     },
 
     async shared(_, { auth_id }) {
       const owner = await User.findOne({ where: { auth_id } });
       const lists = await List.findAll({
         where: {
-          [Op.and]: [
-            { added_by: { [Op.not]: owner.id } },
-            { is_default: false },
-          ],
+          [Op.and]: [{ author: { [Op.not]: owner.id } }, { is_default: false }],
         },
         include: [
           {
@@ -67,30 +79,47 @@ export const resolvers = {
 
     // creates User in DB
     async checkUser(_, { user }) {
-      // creates the user if it wasn't already
-      const [userCreated, userWasCreated] = await User.findOrCreate({
-        where: { auth_id: user.auth_id },
-        defaults: user,
-      });
-      const [defaultList, listWasCreated] = await List.findOrCreate({
-        where: {
-          added_by: userCreated.id,
-          is_default: true,
-        },
-        defaults: {
+      try {
+        // creates the user if it wasn't already
+        const userPayload = {
+          id: user.sub,
+          name: user.name,
+          email: user.email,
+        };
+
+        const defaultListPayload = {
+          id: uuid(),
           name: "Main",
-          is_parent: true,
           is_default: true,
-          added_by: userCreated.id,
-        },
-      });
+          is_parent: true,
+          owners: {
+            create: {
+              user_id: userPayload.id,
+            },
+          },
+        };
 
-      if (listWasCreated) {
-        // creates a default list for the user
-        userCreated.addList(defaultList);
+        const createdUser = await prisma.users.upsert({
+          where: {
+            email: user.email,
+          },
+          create: {
+            ...userPayload,
+            lists_authored: {
+              create: {
+                ...defaultListPayload,
+              },
+            },
+          },
+          update: { updated_at: new Date() },
+        });
+
+        console.log("CREATED USER", createdUser);
+
+        return { success: true };
+      } catch (err) {
+        console.log(err.message);
       }
-
-      return { success: true };
     },
 
     // search users
@@ -105,31 +134,27 @@ export const resolvers = {
     async createList(_, { data, user, parentList }) {
       try {
         // find user
-        const owner = await User.findOne({
-          where: { auth_id: user.auth_id },
+        const newId = uuid();
+        const finalList = await prisma.lists.create({
+          data: {
+            id: newId,
+            ...data,
+            author: user.sub,
+            owners: {
+              create: { user_id: user.sub },
+            },
+          },
         });
 
-        // find parent list
-        const query = {};
-        if (!parentList) query.is_default = true;
-        else query.id = parentList.id;
-        const parents = await owner.getLists({ where: query }); // cannot be made singular
-        const parent = parents[0];
+        // TODO: update parentList to is_parent: true
 
-        // create List
-        const list = await List.create({
-          ...data,
-          added_by: owner.id,
+        const relation = await prisma.list_lists.create({
+          data: {
+            child_id: newId,
+            parent_id: parentList.id,
+          },
         });
 
-        // update relationships
-        parent.is_parent = true;
-        parent.addChild(list);
-        owner.addList(list);
-        await parent.save();
-
-        const finalList = list.toJSON();
-        finalList.owner = owner;
         return finalList;
       } catch (err) {
         console.error(err);
@@ -183,68 +208,3 @@ export const resolvers = {
     },
   },
 };
-
-export function makeWhereFromStringFilter(filter) {
-  const where = Object.entries(filter).reduce((a, [key, predicate]) => {
-    const opDef = Object.entries(predicate).reduce((aa, [operation, value]) => {
-      if (operation === "contains") {
-        aa[Op.substring] = value;
-      } else if (operation === "equals") {
-        aa[Op.eq] = value;
-      } else if (operation === "not_equals") {
-        aa[Op.ne] = value;
-      } else if (operation === "is_empty") {
-        aa[Op.is] = null;
-      } else if (operation === "is_not_empty") {
-        aa[Op.not] = null;
-      } else {
-        aa[Op.eq] = value;
-      }
-      return aa;
-    }, {});
-    a[key] = opDef;
-    return a;
-  }, {});
-  return where;
-}
-
-/**
- *
- *
- *  _____ ___  ___   ___
- * |_   _/ _ \|   \ / _ \
- *   | || (_) | |) | (_) |
- *   |_| \___/|___/ \___/
- *
- * TODO
- * There is a better way to write a filters... (ie like 8base's filter system)
- * but the goal of this project is not to reinvent what 8base has done and the complexity of
- * their system. so... if you are reading this... pretend that I took the time to write
- * a really complex, universal and interesting graphql schema. And that I didnt
- * treat it like a REST api....
- *
- *
- */
-// export function makeWhereFromIdFilter(filter) {
-//   const where = Object.entries(filter).reduce((a, [key, predicate]) => {
-//     const opDef = Object.entries(predicate).reduce((aa, [operation, value]) => {
-//       if (operation === "contains") {
-//         aa[Op.substring] = value;
-//       } else if (operation === "equals") {
-//         aa[Op.eq] = value;
-//       } else if (operation === "not_equals") {
-//         aa[Op.ne] = value;
-//       } else if (operation === "is_empty") {
-//         aa[Op.is] = null;
-//       } else if (operation === "is_not_empty") {
-//         aa[Op.not] = null;
-//       } else {
-//         aa[Op.eq] = value;
-//       }
-//       return aa;
-//     }, {});
-//     a[key] = opDef;
-//     return a;
-//   }, {});
-//   return where;
-// }

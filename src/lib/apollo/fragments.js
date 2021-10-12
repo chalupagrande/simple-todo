@@ -11,6 +11,14 @@ export const LIST_FRAGMENT_SHORT = gql`
   }
 `;
 
+export const USER_FRAGMENT_SHORT = gql`
+  fragment UserFragmentShort on User {
+    id
+    name
+    email
+  }
+`;
+
 export const LIST_FRAGMENT = gql`
   fragment ListFragment on List {
     ...ListFragmentShort
@@ -19,15 +27,15 @@ export const LIST_FRAGMENT = gql`
         ...ListFragmentShort
       }
     }
+    author {
+      ...UserFragmentShort
+    }
+    owners {
+      items {
+        ...UserFragmentShort
+      }
+    }
   }
   ${LIST_FRAGMENT_SHORT}
-`;
-
-export const USER_FRAGMENT_SHORT = gql`
-  fragment UserFragmentShort on User {
-    id
-    name
-    email
-    auth_id
-  }
+  ${USER_FRAGMENT_SHORT}
 `;
