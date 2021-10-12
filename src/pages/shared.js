@@ -3,7 +3,7 @@ import { withPageAuthRequired } from "@auth0/nextjs-auth0";
 import styles from "~/styles/Home.module.css";
 import RecursiveListTable from "~/components/Lists/ListTable/RecursiveListTable";
 import { Typography } from "antd";
-import { SHARED } from "~/lib/apollo/queries";
+import { ELEGANT_SHARED } from "~/lib/apollo/queries";
 const { Title } = Typography;
 
 function Shared({ user }) {
@@ -12,7 +12,7 @@ function Shared({ user }) {
       <main className={styles.main}>
         <Title level={4}>Shared</Title>
         <RecursiveListTable
-          QUERY={SHARED}
+          QUERY={ELEGANT_SHARED}
           level={0}
           user={user}
           itemsAccessorFunction={(d) => d?.shared?.items || []}

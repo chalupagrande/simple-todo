@@ -58,23 +58,9 @@ export const resolvers = {
     },
 
     async shared(_, { auth_id }) {
-      const owner = await User.findOne({ where: { auth_id } });
-      const lists = await List.findAll({
-        where: {
-          [Op.and]: [{ author: { [Op.not]: owner.id } }, { is_default: false }],
-        },
-        include: [
-          {
-            model: List,
-            as: "children",
-          },
-          {
-            model: User,
-            where: { auth_id },
-          },
-        ],
+      const lists = await prisma.lists.findMany({
+        where: filter,
       });
-      return { items: lists };
     },
 
     // creates User in DB
@@ -146,7 +132,12 @@ export const resolvers = {
           },
         });
 
-        // TODO: update parentList to is_parent: true
+        const parent = await prisma.lists.update({
+          where: { id: parentList.id },
+          data: {
+            is_parent: true,
+          },
+        });
 
         const relation = await prisma.list_lists.create({
           data: {
@@ -164,20 +155,12 @@ export const resolvers = {
 
     async updateList(_, { id, data }) {
       try {
-        const list = await List.findOne({ where: { id } });
-        for (const [key, value] of Object.entries(data)) {
-          if (key === "id") continue;
-          else {
-            list.set(key, value);
-          }
+        const list = prisma.lists.update({
+          where: { id },
+          data: { ...data, last_status_update: new Date() },
+        });
 
-          if (key === "status") {
-            list.set("last_status_update", new Date());
-          }
-        }
-
-        const final = await list.save();
-        return final.toJSON();
+        return list;
       } catch (err) {
         console.error(err);
         throw Error(err);

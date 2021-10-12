@@ -13,8 +13,6 @@ function ListsPage({ user }) {
   const router = useRouter();
   const { query } = router;
 
-  console.log("PARENT", parent);
-
   return (
     <div className={styles.container}>
       <main className={styles.main}>

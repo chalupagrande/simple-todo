@@ -10,7 +10,7 @@ import styles from "./ListTable.module.css";
 import PropTypes from "prop-types";
 
 function RecursiveListTable({
-  id,
+  parentListId,
   user,
   level,
   setParent,
@@ -30,14 +30,15 @@ function RecursiveListTable({
     skip: !user,
     fetchPolicy: "cache-and-network",
     variables: {
-      id,
-      filter: !id
+      id: parentListId,
+      filter: !parentListId
         ? {
             AND: [{ author: { equals: user?.sub } }, { is_default: true }],
           }
         : undefined,
     },
   });
+
   const items = itemsAccessorFunction(data);
 
   // __  __ _   _ _____ _ _____ ___ ___  _  _
@@ -158,7 +159,9 @@ function RecursiveListTable({
    */
 
   useInterval(() => {
-    setCount(count + 1);
+    if (level === 0) {
+      setCount(count + 1);
+    }
   }, 60000);
 
   useEffect(() => {
@@ -210,7 +213,7 @@ RecursiveListTable.defaultProps = {
 };
 
 RecursiveListTable.propTypes = {
-  id: PropTypes.string,
+  parentListId: PropTypes.string,
   user: PropTypes.object,
   level: PropTypes.number,
   setParent: PropTypes.func,
