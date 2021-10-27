@@ -67,7 +67,7 @@ export const USERS = gql`
 
 export const ELEGANT_SHARED = gql`
   query GetShared($auth_id: String!) {
-    lists(auth_id: $auth_id, filter: { author: { not: $auth_id } }) {
+    lists(auth_id: $auth_id, filter: { author_id: { not: $auth_id } }) {
       items {
         ...ListFragmentShort
       }

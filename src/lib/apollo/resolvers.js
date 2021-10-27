@@ -24,15 +24,25 @@ export const resolvers = {
               },
             },
             children: {
-              select: {
-                child: true,
+              include: {
+                child: {
+                  include: {
+                    users: {
+                      select: {
+                        auth_id: true,
+                        name: true,
+                        email: true,
+                      },
+                    },
+                  },
+                },
               },
             },
           },
         });
 
-        finalList.owners = mapIncludesToItems(finalList.owners);
-        finalList.children = mapIncludesToItems(finalList.children);
+        finalList.owners = finalList.owners.map((e) => e.users);
+        finalList.children = finalList.children.map((e) => e.child);
         return finalList;
       } catch (err) {
         console.log("ERROR", err.message);
@@ -105,7 +115,7 @@ export const resolvers = {
 
         const mainList = await prisma.lists.findFirst({
           where: {
-            author: user.sub,
+            author_id: user.sub,
             is_default: true,
           },
         });
@@ -137,7 +147,7 @@ export const resolvers = {
           data: {
             id: newId,
             ...data,
-            author: user.sub,
+            author_id: user.sub,
             owners: {
               create: { user_id: user.sub },
             },

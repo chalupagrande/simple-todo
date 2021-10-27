@@ -76,7 +76,7 @@ export const typeDefs = gql`
     created_at: DatePredicate
     updated_at: DatePredicate
     last_status_update: DatePredicate
-    author: IdPredicate
+    author_id: IdPredicate
     AND: [ListFilter]
     OR: [ListFilter]
     NOT: [ListFilter]
@@ -132,6 +132,7 @@ export const typeDefs = gql`
     is_parent: Boolean
     is_default: Boolean
     children: ListResponse
+    author_id: String
     author: User
     owners: UserListResponse
     created_at: Date

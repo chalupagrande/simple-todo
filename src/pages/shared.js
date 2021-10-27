@@ -12,7 +12,7 @@ function ShareListsPage({ user }) {
     variables: {
       auth_id: user?.sub,
       filter: {
-        author: {
+        author_id: {
           not: user?.sub,
         },
       },
