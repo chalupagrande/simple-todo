@@ -21,16 +21,24 @@ export const USER_FRAGMENT_SHORT = gql`
   }
 `;
 
-export const LIST_FRAGMENT = gql`
-  fragment ListFragment on List {
+export const LIST_FRAGMENT_WITH_AUTHOR = gql`
+  fragment ListFragmentWithAuthor on List {
     ...ListFragmentShort
-    children {
-      items {
-        ...ListFragmentShort
-      }
-    }
     author {
       ...UserFragmentShort
+    }
+  }
+  ${LIST_FRAGMENT_SHORT}
+  ${USER_FRAGMENT_SHORT}
+`;
+
+export const LIST_FRAGMENT = gql`
+  fragment ListFragment on List {
+    ...ListFragmentWithAuthor
+    children {
+      items {
+        ...ListFragmentWithAuthor
+      }
     }
     owners {
       items {
@@ -38,6 +46,6 @@ export const LIST_FRAGMENT = gql`
       }
     }
   }
-  ${LIST_FRAGMENT_SHORT}
+  ${LIST_FRAGMENT_WITH_AUTHOR}
   ${USER_FRAGMENT_SHORT}
 `;

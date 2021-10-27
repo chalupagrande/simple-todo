@@ -68,7 +68,6 @@ function RecursiveListTable({
   // |___/_/ \_\_/_/ \_\ |_| |_|_\___|_|
   //
 
-  console.log(items);
   const columns = [
     {
       title: "Name",
@@ -88,7 +87,7 @@ function RecursiveListTable({
       title: "By",
       dataIndex: "author",
       key: "author",
-      render: (d, r) => d?.name,
+      render: (d, r) => r?.author?.name || "--",
     },
     {
       title: "Done",

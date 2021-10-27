@@ -18,18 +18,25 @@ export const resolvers = {
         const finalList = await prisma.lists.findFirst({
           where,
           include: {
+            author: true,
             owners: {
               select: {
-                users: true,
+                users: {
+                  select: {
+                    id: true,
+                    name: true,
+                    email: true,
+                  },
+                },
               },
             },
             children: {
-              include: {
+              select: {
                 child: {
                   include: {
-                    users: {
+                    author: {
                       select: {
-                        auth_id: true,
+                        id: true,
                         name: true,
                         email: true,
                       },
@@ -41,11 +48,13 @@ export const resolvers = {
           },
         });
 
-        finalList.owners = finalList.owners.map((e) => e.users);
-        finalList.children = finalList.children.map((e) => e.child);
+        finalList.children = { items: finalList.children.map((e) => e.child) };
+        finalList.owners = { items: finalList.owners.map((e) => e.users) };
+
         return finalList;
       } catch (err) {
-        console.log("ERROR", err.message);
+        console.error(err.message);
+        return err;
       }
     },
 
@@ -72,7 +81,8 @@ export const resolvers = {
         const sharedLists = userLists.map((e) => e.lists);
         return { items: sharedLists };
       } catch (err) {
-        console.log("ERROR", err.message);
+        console.log(err.message);
+        return err;
       }
     },
 
@@ -126,15 +136,21 @@ export const resolvers = {
         };
       } catch (err) {
         console.log(err.message);
+        return err;
       }
     },
 
     // search users
     async users(_, { filter }) {
-      const userList = await prisma.users.findMany({
-        where: filter,
-      });
-      return { items: userList };
+      try {
+        const userList = await prisma.users.findMany({
+          where: filter,
+        });
+        return { items: userList };
+      } catch (err) {
+        console.log(err.message);
+        return err;
+      }
     },
   },
 
@@ -170,8 +186,8 @@ export const resolvers = {
 
         return finalList;
       } catch (err) {
-        console.error(err);
-        throw Error(err);
+        console.log(err.message);
+        return err;
       }
     },
 
