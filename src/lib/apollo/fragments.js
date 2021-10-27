@@ -8,6 +8,8 @@ export const LIST_FRAGMENT_SHORT = gql`
     status
     last_status_update
     is_default
+    created_at
+    updated_at
   }
 `;
 

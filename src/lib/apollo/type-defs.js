@@ -100,6 +100,11 @@ export const typeDefs = gql`
     items: [User]
   }
 
+  type CheckUserResponse {
+    user: User
+    main: List
+  }
+
   type SuccessResponse {
     success: Boolean
   }
@@ -129,6 +134,8 @@ export const typeDefs = gql`
     children: ListResponse
     author: User
     owners: UserListResponse
+    created_at: Date
+    updated_at: Date
   }
 
   # ENUMS
@@ -144,8 +151,7 @@ export const typeDefs = gql`
   type Query {
     list(id: ID, filter: ListFilter): List
     lists(auth_id: String!, filter: ListFilter): ListResponse
-    shared(auth_id: String!): ListResponse
-    checkUser(user: JSONObject!): SuccessResponse
+    checkUser(user: JSONObject!): CheckUserResponse
     users(filter: UserFilter): UserListResponse
   }
 

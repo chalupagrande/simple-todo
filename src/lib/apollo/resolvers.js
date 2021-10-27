@@ -30,6 +30,7 @@ export const resolvers = {
             },
           },
         });
+
         finalList.owners = mapIncludesToItems(finalList.owners);
         finalList.children = mapIncludesToItems(finalList.children);
         return finalList;
@@ -37,30 +38,32 @@ export const resolvers = {
         console.log("ERROR", err.message);
       }
     },
-    // get multiple lists
-    /**
-     *
-     * NOT BEING USED
-     *
-     */
-    async lists(_, { filter }) {
+
+    async lists(_, { auth_id, filter }) {
       try {
-        const finalLists = await prisma.lists.findMany({
-          where: filter || {},
+        const userLists = await prisma.user_lists.findMany({
+          where: {
+            AND: [
+              {
+                user_id: {
+                  equals: auth_id,
+                },
+              },
+              {
+                lists: filter,
+              },
+            ],
+          },
           include: {
-            owners: true,
+            lists: true,
           },
         });
-        return { items: finalLists };
+
+        const sharedLists = userLists.map((e) => e.lists);
+        return { items: sharedLists };
       } catch (err) {
         console.log("ERROR", err.message);
       }
-    },
-
-    async shared(_, { auth_id }) {
-      const lists = await prisma.lists.findMany({
-        where: filter,
-      });
     },
 
     // creates User in DB
@@ -100,9 +103,17 @@ export const resolvers = {
           update: { updated_at: new Date() },
         });
 
-        console.log("CREATED USER", createdUser);
+        const mainList = await prisma.lists.findFirst({
+          where: {
+            author: user.sub,
+            is_default: true,
+          },
+        });
 
-        return { success: true };
+        return {
+          user: createdUser,
+          main: mainList,
+        };
       } catch (err) {
         console.log(err.message);
       }
@@ -170,10 +181,13 @@ export const resolvers = {
 
     async shareList(_, { id, userId }) {
       try {
-        const list = await List.findOne({ where: { id } });
-        const user = await User.findOne({ where: { id: userId } });
-        user.addList(list);
-        user.save();
+        const userList = await prisma.user_lists.create({
+          data: {
+            user_id: userId,
+            list_id: id,
+          },
+        });
+
         return { success: true };
       } catch (err) {
         console.error(err);
@@ -183,7 +197,11 @@ export const resolvers = {
 
     async deleteList(_, { id }) {
       try {
-        await List.destroy({ where: { id } });
+        await prisma.lists.delete({
+          where: {
+            id,
+          },
+        });
         return { success: true };
       } catch (err) {
         console.error(err);

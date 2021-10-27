@@ -23,7 +23,7 @@ function ListActionMenu({ record, level }) {
     update(cache) {
       cache.modify({
         fields: {
-          lists(existingLists, { DELETE }) {
+          list: (existingLists, { DELETE }) => {
             return DELETE;
           },
         },

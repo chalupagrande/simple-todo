@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { withPageAuthRequired } from "@auth0/nextjs-auth0";
-import { CreateList } from "~/components/Lists";
+import CreateList from "~/components/Lists/CreateList";
 import RecursiveListTable from "~/components/Lists/ListTable/RecursiveListTable";
 import ShareListButton from "~/components/Lists/ShareListButton";
 import { Typography } from "antd";
@@ -12,6 +12,7 @@ function ListsPage({ user }) {
   const [parent, setParent] = useState();
   const router = useRouter();
   const { query } = router;
+  console.log("QUERY", query);
 
   return (
     <div className={styles.container}>
@@ -20,7 +21,7 @@ function ListsPage({ user }) {
         <CreateList user={user} parentList={parent} />
         <ShareListButton list={parent} />
         <RecursiveListTable
-          id={query.listId}
+          parentListId={query.listId}
           level={0}
           user={user}
           setParent={setParent}

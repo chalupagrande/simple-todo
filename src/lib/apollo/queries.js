@@ -18,19 +18,26 @@ export const LISTS = gql`
   query GetLists($auth_id: String!, $filter: ListFilter) {
     lists(auth_id: $auth_id, filter: $filter) {
       items {
-        ...ListFragment
+        ...ListFragmentShort
       }
     }
   }
-  ${LIST_FRAGMENT}
+  ${LIST_FRAGMENT_SHORT}
 `;
 
 export const CHECK_USER = gql`
   query CheckUser($user: JSONObject!) {
     checkUser(user: $user) {
-      success
+      user {
+        ...UserFragmentShort
+      }
+      main {
+        ...ListFragmentShort
+      }
     }
   }
+  ${USER_FRAGMENT_SHORT}
+  ${LIST_FRAGMENT_SHORT}
 `;
 
 /**

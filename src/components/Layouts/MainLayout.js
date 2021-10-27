@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from "react";
+import ls from "local-storage";
 import { useLazyQuery } from "@apollo/client";
 import { CHECK_USER } from "~/lib/apollo/queries";
-import { Affix, Drawer, Layout, Typography } from "antd";
+import { Affix, Drawer, Layout, Spin } from "antd";
 import Navigation from "~/components/Navigation";
 import { MenuOutlined } from "@ant-design/icons";
 import styles from "./styles.module.css";
 import { useUser } from "@auth0/nextjs-auth0";
 import { useWindowSize } from "~/lib/utils";
+import { LOCAL_STORAGE_MAIN_LIST, LOCAL_STORAGE_USER } from "~/config";
 const { Sider, Content } = Layout;
-const { Title } = Typography;
 
 function MainLayout({ children }) {
   const [visible, setVisible] = useState(false);
   const [collapseWidth, setCollapseWidth] = useState(48);
   const { user } = useUser();
   const [checkUser, { loading, data, error }] = useLazyQuery(CHECK_USER);
-
   const windowSize = useWindowSize();
 
+  const loggedInUser = ls.get(LOCAL_STORAGE_USER);
+  const main = ls.get(LOCAL_STORAGE_MAIN_LIST);
+
+  // gets info of logged in user
   useEffect(() => {
     if (user) {
-      console.log("CHECKING USER");
       checkUser({
         variables: {
           user: { ...user, auth_id: user.sub },
@@ -28,6 +31,17 @@ function MainLayout({ children }) {
       });
     }
   }, [user]);
+
+  // sets Local storage with logged in user
+  useEffect(() => {
+    if (data && !loading && !error) {
+      const {
+        checkUser: { main, user },
+      } = data;
+      ls.set(LOCAL_STORAGE_USER, user);
+      ls.set(LOCAL_STORAGE_MAIN_LIST, main);
+    }
+  }, [data]);
 
   return (
     <Layout>

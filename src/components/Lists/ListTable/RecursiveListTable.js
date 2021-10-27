@@ -13,10 +13,9 @@ function RecursiveListTable({
   parentListId,
   user,
   level,
-  setParent,
-  QUERY,
   showNestedLists,
   itemsAccessorFunction,
+  setParent,
 }) {
   const [count, setCount] = useState(1);
 
@@ -26,16 +25,11 @@ function RecursiveListTable({
   //  \__\_\\___/|___|_|_\ |_|
   //
 
-  const { loading, data, error } = useQuery(QUERY || LIST, {
+  const { loading, data, error } = useQuery(LIST, {
     skip: !user,
     fetchPolicy: "cache-and-network",
     variables: {
       id: parentListId,
-      filter: !parentListId
-        ? {
-            AND: [{ author: { equals: user?.sub } }, { is_default: true }],
-          }
-        : undefined,
     },
   });
 
@@ -74,6 +68,7 @@ function RecursiveListTable({
   // |___/_/ \_\_/_/ \_\ |_| |_|_\___|_|
   //
 
+  console.log(items);
   const columns = [
     {
       title: "Name",
@@ -144,9 +139,11 @@ function RecursiveListTable({
 
   // determines how rows are expandable
   const expandable = {
-    expandedRowRender: (d) => (
-      <RecursiveListTable id={d.id} user={user} level={level + 1} />
-    ),
+    expandedRowRender: (d) => {
+      return (
+        <RecursiveListTable parentListId={d.id} user={user} level={level + 1} />
+      );
+    },
     rowExpandable: (d) => d.is_parent,
   };
 
@@ -158,6 +155,7 @@ function RecursiveListTable({
    *
    */
 
+  // updates time since on lists
   useInterval(() => {
     if (level === 0) {
       setCount(count + 1);
@@ -171,6 +169,9 @@ function RecursiveListTable({
     }
   }, [updateError]);
 
+  // sets the parent list on the page
+  // so that the CreateList component knows
+  // which list to create a child for
   useEffect(() => {
     if (data && setParent) {
       setParent(data?.list);
@@ -217,7 +218,6 @@ RecursiveListTable.propTypes = {
   user: PropTypes.object,
   level: PropTypes.number,
   setParent: PropTypes.func,
-  // QUERY: PropTypes.
   showNestedLists: PropTypes.bool,
   itemsAccessorFunction: PropTypes.func.isRequired,
 };

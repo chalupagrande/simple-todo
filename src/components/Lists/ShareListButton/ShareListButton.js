@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AutoComplete, Button, Modal, Typography } from "antd";
+import { AutoComplete, Button, Modal, Typography, Popconfirm } from "antd";
 import { useDebounce } from "~/lib/utils";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { SHARE_LIST } from "~/lib/apollo/mutations";
@@ -80,10 +80,11 @@ function ShareListButton({ list }) {
       <Modal
         title="Share List"
         visible={visible}
-        onOk={handleShareList}
         confirmLoading={loading}
         onCancel={() => setVisible(false)}
-        okText={"Share"}
+        cancelText="Cancel"
+        footer={null}
+        closable={true}
       >
         <p>
           <Text>Search user by email:</Text>
@@ -105,8 +106,22 @@ function ShareListButton({ list }) {
             please.
           </p>
         </Text>
+        <Popconfirm
+          title="Are you sure you want to share with this user? This cannot be undone."
+          onConfirm={handleShareList}
+          onCancel={() => setVisible(false)}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button type="primary">Share List</Button>
+        </Popconfirm>
       </Modal>
-      <Button icon={<ShareAltOutlined />} onClick={() => setVisible(!visible)}>
+
+      <Button
+        type="primary"
+        icon={<ShareAltOutlined />}
+        onClick={() => setVisible(!visible)}
+      >
         Share
       </Button>
     </>

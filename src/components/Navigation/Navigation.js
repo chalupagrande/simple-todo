@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
 import {
   UserOutlined,
@@ -7,39 +7,33 @@ import {
   OrderedListOutlined,
   ShareAltOutlined,
   MenuUnfoldOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
-import { Menu, Typography } from "antd";
+import { Menu } from "antd";
 
 function Navigation({ user }) {
-  const [open, setOpen] = useState(false);
-
-  function toggleOpen() {
-    setOpen(!open);
-  }
-
-  function close() {
-    setOpen(false);
-  }
-
   return (
     <Menu
       mode="inline"
-      defaultSelectedKeys={["4"]}
+      defaultSelectedKeys={["1"]}
       style={{ margin: 0, padding: 0 }}
     >
       {user ? (
         <>
-          <Menu.Item key="3" icon={<OrderedListOutlined />}>
+          <Menu.Item key="1" icon={<OrderedListOutlined />}>
             <Link href="/lists">Main</Link>
           </Menu.Item>
           <Menu.Item key="2" icon={<MenuUnfoldOutlined />}>
             <Link href="/recipes">Recipes</Link>
           </Menu.Item>
-          <Menu.Item key="4" icon={<ShareAltOutlined />}>
+          <Menu.Item key="3" icon={<ShareAltOutlined />}>
             <Link href="/shared">Shared</Link>
           </Menu.Item>
-          <Menu.Item key="1" icon={<UserOutlined />}>
+          <Menu.Item key="4" icon={<UserOutlined />}>
             <Link href="/profile">Profile</Link>
+          </Menu.Item>
+          <Menu.Item key="6" icon={<HomeOutlined />}>
+            <Link href="/">Home</Link>
           </Menu.Item>
           <Menu.Item key="5" icon={<LogoutOutlined />}>
             <a href="/api/auth/logout">Logout</a>
